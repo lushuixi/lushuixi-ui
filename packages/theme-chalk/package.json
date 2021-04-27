@@ -1,0 +1,11 @@
+{
+  "name": "y-theame-chalk",
+  "version": "1.0.0",
+  "description": "theame-chalk",
+  "main": "lib/index.css",
+  "scripts": {
+    "build": "gulp build"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,80 @@
+.l-checkbox {
+    position: relative;
+    margin-right: 30px;
+}
+.l-checkbox:last-child {
+    margin-right: 0;
+}
+.l-checkbox__input {
+    position: relative;
+}
+.l-checkbox__inner {
+    display: inline-block;
+    position: relative;
+    width: 14px;
+    height: 14px;
+    border: 1px solid #dcdfe6;
+    border-radius: 2px;
+    box-sizing: border-box;
+    vertical-align: middle;
+}
+.l-checkbox__inner::after {
+    content: '';
+    display: content-box;
+    width: 3px;
+    height: 7px;
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    box-sizing: border-box;
+    border: 1px solid #fff;
+    border-top: 0;
+    border-left: 0;
+    transform: rotate(0deg) scale(0);
+}
+/* 选中样式 */
+.l-checkbox__input.is-checked .l-checkbox__inner {
+    background-color: #409eff;
+    border-color: #409eff;
+}
+/* 选中后中间的对号,通过旋转45度得到 */
+.l-checkbox__input.is-checked .l-checkbox__inner::after {
+    transform: rotate(45deg) scale(1);
+}
+/* 半选中状态 */
+.l-checkbox__input.is-indeterminate .l-checkbox__inner {
+    background-color: #409eff;
+    border-color: #409eff;
+}
+/* 半选中状态 中间的横杠 */
+.l-checkbox__input.is-indeterminate .l-checkbox__inner::after {
+    content: none;
+}
+.l-checkbox__input.is-indeterminate .l-checkbox__inner::before {
+    content: '';
+    display: inline-block;
+    height: 2px;
+    background-color: #fff;
+    position: absolute;
+    top: 5px;
+    right: 0;
+    left: 0;
+    transform: scale(.5);
+}
+/* 隐藏原生多选框 */
+.l-checkbox__original {
+    opacity: 0;
+    outline: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    margin: 0;
+}
+.l-checkbox__label {
+    font-size: 14px;
+    display: inline-block;
+    padding-left: 10px;
+}
