@@ -3,11 +3,16 @@
         :class="[{
             'y-table__border': border
         }]">
-        table
+        <div v-if="showHeader"
+            class="y-table__header-wrapper"
+            ref="headerWrapper">
+            <table-header></table-header>
+        </div>
     </div>
 </template>
 
 <script>
+import TableHeader from './table-header';
 export default {
 
     name: 'YTable',
@@ -27,6 +32,16 @@ export default {
         // border需为布尔类型Boolean
         border: Boolean,
 
+        // 是否显示表头, 布尔类型, 默认为true
+        showHeader: {
+            type: Boolean,
+            default: true
+        }
+
+    },
+
+    components: {
+        TableHeader,
     },
 
     mounted() {

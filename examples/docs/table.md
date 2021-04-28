@@ -29,8 +29,9 @@
 #### 表格属性
 
 表格有行和列, 表格属性
-- data 数组类型 表体的数据源
-- border 布尔值 边框
+- data 数组类型 表体的数据源,默认为[]
+- border 布尔值 边框,默认为false
+- showHeader 布尔值 是否显示表头,默认为true
 
 table-colummn 属性
 - prop 字符串类型 data数据项的名
