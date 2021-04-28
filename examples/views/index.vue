@@ -1,7 +1,9 @@
 <template>
     <div>
-        views/input
-        <l-checkbox v-model="checkboxValue" label="2">22</l-checkbox>
+        <y-table :data="tableData">
+            <y-table-column prop="name" label="姓名"></y-table-column>
+            <y-table-column prop="position" label="职位"></y-table-column>
+        </y-table>
     </div>
 </template>
 
@@ -9,7 +11,16 @@
 export default {
     data() {
         return {
-            checkboxValue: ""
+            tableData: [
+                {
+                    name: "路飞",
+                    position: "船长",
+                },
+                {
+                    name: "索隆",
+                    position: "战斗员",
+                }
+            ]
         }
     }
 }

@@ -4,6 +4,8 @@ import Radio from '../packages/radio/index.js';
 import RadioGroup from '../packages/radio-group/index.js';
 import Checkbox from '../packages/checkbox/index.js';
 import CheckboxGroup from '../packages/checkbox-group/index.js';
+import Table from '../packages/table/index.js';
+import TableColumn from '../packages/table-column/index.js';
 
 const components = [
     Button,
@@ -11,6 +13,8 @@ const components = [
     RadioGroup,
     Checkbox,
     CheckboxGroup,
+    Table,
+    TableColumn,
 ]
 
 // 全局注册组件
@@ -28,4 +32,6 @@ export default {
     RadioGroup,
     Checkbox,
     CheckboxGroup,
+    Table,
+    TableColumn,
 }
