@@ -1,18 +1,21 @@
 <template>
+    <!-- table组件是如何渲染子组件tabel-column的呢? -->
     <div class="y-table"
         :class="[{
             'y-table__border': border
         }]">
-        <div v-if="showHeader"
+        <!-- <div v-if="showHeader"
             class="y-table__header-wrapper"
             ref="headerWrapper">
             <table-header></table-header>
-        </div>
+        </div> -->
+        <slot></slot>
     </div>
 </template>
 
 <script>
 import TableHeader from './table-header';
+let tableIdSeed = 1;
 export default {
 
     name: 'YTable',
@@ -44,8 +47,12 @@ export default {
         TableHeader,
     },
 
+    created() {
+        this.tableId = 'y-table_' + tableIdSeed++;
+    },
+
     mounted() {
-        console.log('data', this.data)
+        console.log('data', this)
     }
 
 }
