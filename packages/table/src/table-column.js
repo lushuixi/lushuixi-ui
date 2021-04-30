@@ -21,6 +21,7 @@ export default {
 
     data() {
         return {
+            isSubColumn: false,
             columns: [],
         }
     },
@@ -60,7 +61,7 @@ export default {
                 return prev;
             }, {});
         },
-        // 获取索引
+        // 获取child在children的位置
         getColumnElIndex(children, child) {
             // console.log('getColumnElIndex', children, child);
             return [].indexOf.call(children, child);
@@ -88,6 +89,8 @@ export default {
     created() {
         // 定义table-column组件的columnId
         const parent = this.columnOrTableParent;
+        // 是否是子列, 如果两者不相等,则是子列(直接父组件也是table-column)
+        this.isSubColumn = this.owner !== parent;
         this.columnId = (parent.tableId || parent.columnId) + '_column_' + columnIdSeed++;
         // console.log('create', this.columnId);
 
@@ -113,13 +116,19 @@ export default {
         // console.log('table-column传递的属性', this.prop, this.label);
         const owner = this.owner;
         const parent = this.columnOrTableParent;
+
         // vm.$children 当前实例的直接子组件(虚拟节点)
         // vm.$el.children 当前dom节点的直接子节点(真实dom节点)
-        const children = parent.$el.children;
-        const columnIndex = this.getColumnElIndex(children, this.$el);
-        owner.store.commit('insertColumn', this.columnConfig);
-        // console.log('888888888888', owner, parent, children, columnIndex);
+        // 如果直父组件是table-column
+        const children = this.isSubColumn ? parent.$el.children : parent.$refs.hiddenColumns.children;
         
+        const columnIndex = this.getColumnElIndex(children, this.$el);
+        // 父组件table的store
+        // console.log('父组件table的store', owner, owner.store);
+        console.log('columnConfig', this.columnConfig);
+        owner.store.commit('insertColumn', this.columnConfig, columnIndex, this.isSubColumn ? parent.columnConfig : null);
+        // console.log('888888888888', owner, parent, children, columnIndex);
+        // console.log('777777777', children, parent.$refs.hiddenColumns.children)
     },
 
     render(h) {
