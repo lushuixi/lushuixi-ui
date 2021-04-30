@@ -4,21 +4,31 @@
         :class="[{
             'y-table__border': border
         }]">
+        <!-- 原生-子节点-列的渲染 -->
+        <div class="hidden-columns" ref="hiddenColumns">
+            <slot></slot>
+        </div>
         <!-- <div v-if="showHeader"
             class="y-table__header-wrapper"
             ref="headerWrapper">
             <table-header></table-header>
         </div> -->
-        <slot></slot>
     </div>
 </template>
 
 <script>
+import TableLayout from './table-layout';
 import TableHeader from './table-header';
+import {createStore} from './store/helper';
+
 let tableIdSeed = 1;
 export default {
 
     name: 'YTable',
+
+    components: {
+        TableHeader,
+    },
 
     props: {
 
@@ -29,7 +39,7 @@ export default {
             // 对象或数组默认值必须从一个工厂函数获取
             default: function () {
                 return [];
-            }
+            },
         },
 
         // border需为布尔类型Boolean
@@ -39,12 +49,26 @@ export default {
         showHeader: {
             type: Boolean,
             default: true
-        }
+        },
+
+        // 行数据的key,用来优化table的渲染
+        rowKey: [String, Function],
 
     },
 
-    components: {
-        TableHeader,
+    data() {
+        this.store = createStore(this, {
+            rowKey: this.rowKey,
+        });
+        // TableLayout 设置表格的相关属性
+        const layout = new TableLayout({
+            store: this.store,
+            table: this,
+            showHeader: this.showHeader,
+        });
+        return {
+            layout,
+        }
     },
 
     created() {
@@ -52,12 +76,20 @@ export default {
     },
 
     mounted() {
-        console.log('data', this)
+        // console.log('data', this)
+        console.log('6666', this)
     }
 
 }
 </script>
 
 <style>
-
+    .y-table {
+        position: relative;
+    }
+    .y-table .hidden-columns {
+        position: absolute;
+        visibility: hidden;
+        z-index: -1;
+    }
 </style>

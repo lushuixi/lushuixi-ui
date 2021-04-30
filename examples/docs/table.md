@@ -50,3 +50,18 @@ table-colummn 属性
 问题
 - element如何将el-table-column渲染到el-table里面的呢？
 - element中el-table-column组件没有tamplate结构,是如何渲染的呢？
+
+Vue有两种html创建方式
+
+- 模板创建
+```
+<h1>{{ blogTitle }}</h1>
+```
+
+- 渲染函数创建render
+```
+render: function (createElement) {
+  return createElement('h1', this.blogTitle)
+}
+```
+渲染函数使用场景

@@ -2570,10 +2570,10 @@ css-declaration-sorter@^4.0.1:
     postcss "^7.0.1"
     timsort "^0.3.0"
 
-css-loader@^2.1.0:
+css-loader@^2.1.1:
   version "2.1.1"
-  resolved "https://registry.nlark.com/css-loader/download/css-loader-2.1.1.tgz#d8254f72e412bb2238bb44dd674ffbef497333ea"
-  integrity sha1-2CVPcuQSuyI4u0TdZ0/770lzM+o=
+  resolved "https://registry.yarnpkg.com/css-loader/-/css-loader-2.1.1.tgz#d8254f72e412bb2238bb44dd674ffbef497333ea"
+  integrity sha512-OcKJU/lt232vl1P9EEDamhoO9iKY3tIjY5GU+XDLblAykTdgs6Ux9P1hTHve8nFKy5KPpOXOsVI/hIwi3841+w==
   dependencies:
     camelcase "^5.2.0"
     icss-utils "^4.1.0"
@@ -2752,6 +2752,11 @@ dateformat@^1.0.6, dateformat@^1.0.7-1.2.3:
   dependencies:
     get-stdin "^4.0.1"
     meow "^3.3.0"
+
+de-indent@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/de-indent/-/de-indent-1.0.2.tgz#b2038e846dc33baa5796128d0804b455b8c1e21d"
+  integrity sha1-sgOOhG3DO6pXlhKNCAS0VbjB4h0=
 
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
@@ -4613,7 +4618,7 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
 
-he@1.2.0, he@1.2.x:
+he@1.2.0, he@1.2.x, he@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
@@ -6337,10 +6342,10 @@ min-document@^2.19.0:
   dependencies:
     dom-walk "^0.1.0"
 
-mini-css-extract-plugin@^0.4.1:
+mini-css-extract-plugin@^0.4.5:
   version "0.4.5"
-  resolved "https://registry.npm.taobao.org/mini-css-extract-plugin/download/mini-css-extract-plugin-0.4.5.tgz?cache=0&sync_timestamp=1618672508868&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fmini-css-extract-plugin%2Fdownload%2Fmini-css-extract-plugin-0.4.5.tgz#c99e9e78d54f3fa775633aee5933aeaa4e80719a"
-  integrity sha1-yZ6eeNVPP6d1YzruWTOuqk6AcZo=
+  resolved "https://registry.yarnpkg.com/mini-css-extract-plugin/-/mini-css-extract-plugin-0.4.5.tgz#c99e9e78d54f3fa775633aee5933aeaa4e80719a"
+  integrity sha512-dqBanNfktnp2hwL2YguV9Jh91PFX7gu7nRLs4TGsbAfAG6WOtlynFRYzwDwmmeSb5uIwHo9nx1ta0f7vAZVp2w==
   dependencies:
     loader-utils "^1.1.0"
     schema-utils "^1.0.0"
@@ -7742,10 +7747,10 @@ process@^0.11.10:
   resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
   integrity sha1-czIwDoQBYb2j5podHZGn1LwW8YI=
 
-progress-bar-webpack-plugin@^1.11.0:
+progress-bar-webpack-plugin@^1.12.1:
   version "1.12.1"
-  resolved "https://registry.npm.taobao.org/progress-bar-webpack-plugin/download/progress-bar-webpack-plugin-1.12.1.tgz#bbf3b1137a4ba2474eeb111377d6c1a580c57dd1"
-  integrity sha1-u/OxE3pLokdO6xETd9bBpYDFfdE=
+  resolved "https://registry.yarnpkg.com/progress-bar-webpack-plugin/-/progress-bar-webpack-plugin-1.12.1.tgz#bbf3b1137a4ba2474eeb111377d6c1a580c57dd1"
+  integrity sha512-tVbPB5xBbqNwdH3mwcxzjL1r1Vrm/xGu93OsqVSAbCaXGoKFvfWIh0gpMDpn2kYsPVRSAIK0pBkP9Vfs+JJibQ==
   dependencies:
     chalk "^1.1.1"
     object.assign "^4.0.1"
@@ -9889,6 +9894,14 @@ vue-style-loader@^4.1.0:
   dependencies:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
+
+vue-template-compiler@^2.5.21:
+  version "2.6.12"
+  resolved "https://registry.yarnpkg.com/vue-template-compiler/-/vue-template-compiler-2.6.12.tgz#947ed7196744c8a5285ebe1233fe960437fcc57e"
+  integrity sha512-OzzZ52zS41YUbkCBfdXShQTe69j1gQDZ9HIX8miuC9C3rBCk9wIRjLiZZLrmX9V+Ftq/YEyv1JaVr5Y/hNtByg==
+  dependencies:
+    de-indent "^1.0.2"
+    he "^1.1.0"
 
 vue-template-es2015-compiler@^1.6.0, vue-template-es2015-compiler@^1.9.0:
   version "1.9.1"

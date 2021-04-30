@@ -3,6 +3,7 @@
  * @param {Object} obj 
  * @param {String} key 
  * @returns Boolean
+ * obj.hasOwnProperty(key)
  */
 function hasOwn(obj, key) {
     // console.log(obj)
