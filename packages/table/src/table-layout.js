@@ -1,5 +1,5 @@
 // import Vue from 'vue';
-// TableLayout 设置表格的相关属性
+// TableLayout 设置表格的相关属性和方法
 
 class TableLayout {
     // 构造器

@@ -8,14 +8,33 @@ import Watcher from './watcher';
  */
 Watcher.prototype.mutations = {
     /**
-     * 
+     * 给公共数据池stores赋值data
+     */
+    setData(states, data) {
+        // console.log('setData', states, data);
+        states.data = data;
+    },
+    /**
+     * 向公共数据池中的columns插入列属性
+     * splice() 方法向/从数组中添加/删除项目，然后返回被删除的项目(会改变原有数组)
+     * arrayObject.splice(index,howmany,item1,.....,itemX) howmany为0则添加
      * @param {Object} states 
      * @param {String} column 
      * @param {String} index 
      * @param {Vnode} parent 
      */
     insertColumn(states, column, index, parent) {
-        console.log('insertColumn', states, column, index, parent);
+        // console.log('insertColumn', states, column, index, parent);
+        let array = states.columns;
+        
+        if(typeof index !== 'undefined') {
+            array.splice(index, 0, column);
+        }else {
+            array.push(column);
+        }
+
+        // console.log('array', array, states)
+
     }
 }
 
@@ -29,6 +48,7 @@ Watcher.prototype.mutations = {
  */
 Watcher.prototype.commit = function(name, ...args) {
     // console.log('Watcher', name, args, this, [this.states].concat(args));
+    console.log('Watcher', this)
     const mutations = this.mutations;
     if(mutations[name]) {
         // 第一个参数为states, 后面的参数为args

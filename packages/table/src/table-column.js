@@ -1,6 +1,6 @@
 /**
  * 注意: 该文件不是vue文件,而是js文件
- * 使用jsx语言渲染dom
+ * 使用jsx语言渲染dom(需要安装相应的插件以支持JSX)
  * 官方文档: https://cn.vuejs.org/v2/guide/render-function.html
  * 该js是table-column组件,那么在使用该组件时,会传递过来两个属性prop和label
  * 这两个属性要如何处理才能往columns中添加该列的属性呢？
@@ -12,11 +12,12 @@ console.log('hhuhuhu', columnIdSeed);
 export default {
     name: 'YTableColumn',
     
+    // prop传值
     props: {
         // 表格数据项字段名
         prop: String,
         // 标题
-        label: String
+        label: String,
     },
 
     data() {
@@ -79,7 +80,7 @@ export default {
      * 在模板被渲染成html之前被调用, 即通常初始化某些属性值, 然后再渲染成视图
      * this.$el -> undefined
      * this.$data -> data的初始化值
-     * 此时,虚拟dom节点已生产,但是还没有渲染成真是的dom节点
+     * 此时,虚拟dom节点已生成,但是还没有渲染成真是的dom节点
      * 注意: 如果table下有两个table-column,则第一个table-column时,columnIdSeed值为1,
      * 但是到第二个table-column时,columnIdSeed值为2,这是为什么呢?
      * 测试了下,发现无论第几个table-column,在export default外打印值都为1且只在第一次打印了
@@ -100,7 +101,7 @@ export default {
         }
 
         // 基础属性
-        const basicProps = ['label'];
+        const basicProps = ['label', 'prop',];
         
         // 收集column属性
         let column = this.getPropsData(basicProps);
@@ -123,18 +124,21 @@ export default {
         const children = this.isSubColumn ? parent.$el.children : parent.$refs.hiddenColumns.children;
         
         const columnIndex = this.getColumnElIndex(children, this.$el);
+        // 甚为关键,将该列的属性存入到table的公共池中
         // 父组件table的store
         // console.log('父组件table的store', owner, owner.store);
-        console.log('columnConfig', this.columnConfig);
+        // console.log('columnConfig', this.columnConfig);
         owner.store.commit('insertColumn', this.columnConfig, columnIndex, this.isSubColumn ? parent.columnConfig : null);
         // console.log('888888888888', owner, parent, children, columnIndex);
         // console.log('777777777', children, parent.$refs.hiddenColumns.children)
     },
 
+    // render渲染
     render(h) {
         // console.log('table-column', h,  this.$slots);
         // 默认插槽,替子元素占位
         // slots 也要渲染，需要计算合并表头
+        // 结构比较简单, 就不用jsx了
         return h('div', this.$slots.default);
     }
 }
