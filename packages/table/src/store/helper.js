@@ -1,5 +1,11 @@
 import Store from './index';
 
+/**
+ * 创建公共池并设置公共池中的数据初始化
+ * @param {Object} table 
+ * @param {Object} initialState 
+ * @returns 
+ */
 export function createStore(table, initialState = {}) {
     // 如果不存在,则抛错
     if(!table) {
@@ -19,6 +25,13 @@ export function createStore(table, initialState = {}) {
     return store;
 }
 
+/**
+ * 实现同时定义多个computed属性
+ * 但是只能在computed中执行 ...mapStates({columns: 'columns'})
+ * 换到mounted()中便不可以了
+ * @param {Object} mapper 
+ * @returns Object
+ */
 export function mapStates(mapper) {
     const res = {};
     // console.log('mapStates', mapper, res);
