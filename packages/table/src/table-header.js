@@ -1,7 +1,25 @@
-import {mapStates} from './store/helper';
+import {
+    mapStates,
+} from './store/helper';
+import LayoutObserver from './layout-observer';
+
+/**
+ * th和td标签中属性colspan和rowspan有什么意义吗?
+ */
+
+const convertToRows = (columns) => {
+    columns.forEach((column) => {
+        column.colspan = 1;
+        column.rowspan = 1;
+    })
+
+    return columns;
+}
 
 export default {
     name: "YTableHeader",
+
+    mixins: [LayoutObserver],
 
     props: {
         store: {
@@ -10,16 +28,26 @@ export default {
     },
 
     computed: {
+        table() {
+            return this.$parent;
+        },
+
         ...mapStates({
-            columns: 'columns'
+            columns: 'columns', 
         })
     }, 
+
+    watch: {
+        columns(newValue) {
+            console.log('header-监听columns变化', newValue)
+        },
+    },
 
     render(h) {
         // console.log('YTableHeader-render函数', this._l);
         // return h('span');
 
-        let columnRows = this.columns;
+        let columnRows = convertToRows(this.columns);
         // console.log('columnRows', columnRows)
 
         /**
@@ -50,7 +78,10 @@ export default {
                         <tr>
                             {
                                 this._l(columnRows, (column, cellIndex) => (
-                                    <th key={cellIndex}>
+                                    <th
+                                        key={cellIndex}
+                                        colspan={column.colspan}
+                                        rowspan={column.rowspan}>
                                         <div
                                             class="cell">
                                             {column.label}

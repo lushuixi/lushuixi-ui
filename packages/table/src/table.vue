@@ -7,6 +7,10 @@
         y-table-column职责: 收集列的属性,并将其提交到公共数据池中的columns
         y-table通过prop得到的data: 提交到公共数据池中的data
         接下来, 如何展示呢? -- 表格布局
+
+        样式----------------------
+        如何保证th和td同宽?
+        给table-column添加width属性
     -->
     <div class="y-table"
         :class="[{
@@ -22,26 +26,40 @@
             ref="headerWrapper">
             <table-header
                 ref="tableHeader"
-                :store="store">
-            </table-header>
+                :store="store"
+                :style="{
+                    width: bodyWidth
+                }"></table-header>
         </div>
         <!-- 表体 -->
         <div
             class="y-table__body-wrapper"
             ref="bodyWrapper">
             <table-body
-                :store="store">
-            </table-body>
+                :store="store"
+                :style="{
+                    width: bodyWidth
+                }"></table-body>
         </div>
         <!-- 表尾 -->
     </div>
 </template>
 
 <script>
+import {
+    debounce, 
+    throttle
+} from 'throttle-debounce';
 import TableLayout from './table-layout';
 import TableHeader from './table-header';
 import TableBody from './table-body';
-import {createStore, mapStates} from './store/helper';
+import {
+    createStore, 
+    mapStates
+} from './store/helper';
+import {
+    addResizeListener
+} from '../../../src/utils/resize-event';
 
 let tableIdSeed = 1;
 export default {
@@ -77,6 +95,36 @@ export default {
         // 行数据的key,用来优化table的渲染
         rowKey: [String, Function],
 
+        // 列的宽度是否自动撑开
+        fit: {
+            type: Boolean,
+            default: true
+        },
+
+    },
+
+    computed: {
+        bodyWidth() {
+            const {bodyWidth} = this.layout;
+            // console.log('55', bodyWidth + 'px')
+            
+            return bodyWidth + 'px';
+        },
+
+        bodyWrapper() {
+            return this.$refs.bodyWrapper;
+        },
+        
+        /**
+         * 对象展开运算符
+         * 参考:https://vuex.vuejs.org/zh/guide/state.html#mapstate-%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0
+         * 需要安装插件:babel-plugin-transform-object-rest-spread
+         * 配置.bablrc文件:{"plugins": ["transform-object-rest-spread"]}
+         */
+        ...mapStates({
+            columns: 'columns',
+            tableData: 'data',
+        })
     },
 
     data() {
@@ -91,24 +139,71 @@ export default {
         });
         return {
             layout,
+            resizeState: {
+                width: null,
+                height: null,
+            }
         }
     },
 
-    computed: {
+    methods: {
         /**
-         * 对象展开运算符
-         * 参考:https://vuex.vuejs.org/zh/guide/state.html#mapstate-%E8%BE%85%E5%8A%A9%E5%87%BD%E6%95%B0
-         * 需要安装插件:babel-plugin-transform-object-rest-spread
-         * 配置.bablrc文件:{"plugins": ["transform-object-rest-spread"]}
+         * throttle 节流
          */
-        ...mapStates({
-            columns: 'columns',
-            tableData: 'data',
-        })
+        syncPostion: throttle(20, function() {
+            const {scrollLeft, scrollTop, offsetWidth, scrollWidth} = this.bodyWrapper;
+            console.log('syncPosition', scrollLeft, scrollTop, offsetWidth, scrollWidth)
+        }),
+
+        // 监听窗口尺寸变化的响应的事件
+        resizeListener() {
+            if(!this.$ready) return;
+
+            // 页面窗口尺寸变化,是否需要更新布局
+            let shouldUpdateLayout = false;
+
+            const el = this.$el;
+
+            const {width: oldWidth, height: oldHeight} = this.resizeState;
+            console.log('old', oldWidth, oldHeight, el.offsetWidth);
+
+            const width = el.offsetWidth;
+            if(oldWidth !== width) {
+                shouldUpdateLayout = true;
+            }
+
+            if(shouldUpdateLayout) {
+                this.resizeState.width = width;
+                // this.resizeState.height = height;
+
+                this.doLayout();
+            }
+        },
+
+        // 绑定事件
+        bindEvents() {
+            console.log('999', this.bodyWrapper);
+            // 监听滚动
+            this.bodyWrapper.addEventListener('scroll', 
+                this.syncPostion,
+                {passive: true},
+            );
+
+            // 如果列是自动撑开,则添加窗口尺寸的监听事件
+            if(this.fit) {
+                addResizeListener(this.$el, this.resizeListener);
+            }
+        },
+
+        doLayout() {
+            this.layout.updateColumnsWidth();
+        }
     },
 
     created() {
         this.tableId = 'y-table_' + tableIdSeed++;
+
+        // this.debouncedUpdateLayout = debounce(50, () => this.doLayout());
     },
 
     mounted() {
@@ -119,6 +214,20 @@ export default {
         //     tableData: 'data',
         // })
         console.log('88888888', this);
+
+        // 绑定监听页面尺寸变化事件
+        this.bindEvents();
+
+        this.doLayout();
+
+        this.resizeState = {
+            width: this.$el.offsetWidth,
+            height: this.$el.offsetHeight,
+        }
+
+        // 监听窗口尺寸的变化,更新col的宽度
+
+        this.$ready = true;
     },
 
     /**
@@ -145,11 +254,42 @@ export default {
 
 <style>
     .y-table {
+        box-sizing: border-box;
         position: relative;
+        width: 100%;
+    }
+    .y-table::before {
+        content: '';
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        height: 1px;
+        background-color: #ebeef5;
     }
     .y-table .hidden-columns {
         position: absolute;
         visibility: hidden;
         z-index: -1;
+    }
+    .y-table .cell {
+        box-sizing: border-box;
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+        line-height: 23px;
+    }
+    .y-table .y-table__header,
+    .y-table .y-table__body {
+        width: 100%;
+    }
+    .y-table td,
+    .y-table th {
+        box-sizing: border-box;
+        text-align: left;
+        padding: 12px 0;
+        vertical-align: middle;
+    }
+    .y-table td {
+        border-top: 1px solid #ebeef5;
     }
 </style>

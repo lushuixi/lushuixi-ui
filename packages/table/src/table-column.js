@@ -5,9 +5,18 @@
  * 该js是table-column组件,那么在使用该组件时,会传递过来两个属性prop和label
  * 这两个属性要如何处理才能往columns中添加该列的属性呢？
  */
-import {mergeOptions} from './utils';
+import {
+    mergeOptions, 
+    parseWidth,
+    parseMinWidth,
+    compose,
+} from './utils';
+
+import {
+    defaultRenderCell,
+} from './config';
+
 let columnIdSeed = 1;
-console.log('hhuhuhu', columnIdSeed);
 
 export default {
     name: 'YTableColumn',
@@ -18,6 +27,9 @@ export default {
         prop: String,
         // 标题
         label: String,
+        // 列宽
+        width: {},
+        minWidth: {},
     },
 
     data() {
@@ -47,6 +59,16 @@ export default {
                 parent = parent.$parent;
             }
             return parent;
+        },
+
+        // 宽度
+        realWidth() {
+            return parseWidth(this.width);
+        },
+        
+        // 最小宽度
+        realMinWidth() {
+            return parseMinWidth(this.minWidth);
         }
     },
     
@@ -62,11 +84,71 @@ export default {
                 return prev;
             }, {});
         },
+
         // 获取child在children的位置
         getColumnElIndex(children, child) {
             // console.log('getColumnElIndex', children, child);
             return [].indexOf.call(children, child);
-        }
+        },
+
+        // 设置列宽
+        setColumnWidth(column) {
+            if(this.realWidth) {
+                column.width = this.realWidth;
+            }
+
+            if(this.realMinWidth) {
+                column.minWidth = this.realMinWidth;
+            }
+
+            if(!column.minWidth) {
+                column.minWidth = 80;
+            }
+
+            column.realWidth = column.width === undefined ? column.minWidth : column.width;
+            
+            return column;
+        },
+
+        /**
+         * 在table-column中设置列的渲染函数
+         * 列的渲染是通过table-header调用的
+         * @param {Object} column 
+         * @returns column
+         */
+        setColumnRenders(column) {
+            // console.log('setColumnRenders', column);
+            let originRenderCell = column.renderCell;
+            // console.log('setColumnRenders', originRenderCell, defaultRenderCell)
+
+            originRenderCell = originRenderCell || defaultRenderCell;
+
+            // 对renderCell进行包装
+            column.renderCell = (h, data) => {
+                let children = null;
+                // console.log('renderCell', h, data, this.$scopeSlots);
+                
+                children = originRenderCell(h, data);
+
+                const props = {
+                    class: 'cell',
+                    style: {},
+                };
+
+                return (
+                    <div {...props}>
+                        {children}
+                    </div>
+                )
+            }
+
+            return column;
+        },
+
+        // setColumnForcedProps(column) {
+        //     console.log('setColumnForcedProps', column);
+        //     return column;
+        // }
     },
 
     // 此时,this.data和this.$el都还没有值,为undefined, 也可以进行一些初始化
@@ -98,15 +180,26 @@ export default {
         // 定义默认属性,暂时只有id
         const defaults = {
             id: this.columnId,
+            // 对应列内容的字段名, 也可以使用 property 属性
+            property: this.prop || this.property,
         }
 
         // 基础属性
-        const basicProps = ['label', 'prop',];
+        // const basicProps = ['label', 'prop',];
+        const basicProps = ['label',];
         
         // 收集column属性
         let column = this.getPropsData(basicProps);
         column = mergeOptions(defaults, column);
         // console.log('ccc', column);
+
+        // 注意compose(组成,构成)执行顺序是从右到左,现在chains就相当于一个函数
+        // const chains = compose(this.setColumnRenders, this.setColumnWidth, this.setColumnForcedProps);
+        const chains = compose(this.setColumnRenders, this.setColumnWidth);
+        column = chains(column);
+        // console.log('chains', chains, column, chains(column));
+
+        // console.log('chanins', column, column.renderCell())
 
         this.columnConfig = column;
         
@@ -131,6 +224,8 @@ export default {
         owner.store.commit('insertColumn', this.columnConfig, columnIndex, this.isSubColumn ? parent.columnConfig : null);
         // console.log('888888888888', owner, parent, children, columnIndex);
         // console.log('777777777', children, parent.$refs.hiddenColumns.children)
+
+        // console.log('777777777', this.width)
     },
 
     // render渲染

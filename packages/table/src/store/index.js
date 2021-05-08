@@ -48,7 +48,7 @@ Watcher.prototype.mutations = {
  */
 Watcher.prototype.commit = function(name, ...args) {
     // console.log('Watcher', name, args, this, [this.states].concat(args));
-    console.log('Watcher', this)
+    // console.log('Watcher', this)
     const mutations = this.mutations;
     if(mutations[name]) {
         // 第一个参数为states, 后面的参数为args
