@@ -6,7 +6,69 @@
  * 官方文档: https://cn.vuejs.org/v2/guide/render-function.html
  * 该js是table-column组件,那么在使用该组件时,会传递过来两个属性prop和label
  * 这两个属性要如何处理才能往columns中添加该列的属性呢？
+ * 
+ * 如何实现多级表头?
+ *  - table-column中嵌套table-column
+ * 
+ * 例如:
+ * - 调用结构:
+ * <y-table>
+ *     <y-table-column prop="name" label="姓名"></y-table-column>
+ *     <y-table-column label="个人信息">
+ *         <y-table-column prop="position" label="职位"></y-table-column>
+ *         <y-table-column prop="sex" label="性别"></y-table-column>
+ *     </y-table-column>
+ * </y-table>
+ * 
+ * 如何实现多级表头?
+ * 
+ * - 先看要实现的目标结构,
+ * <table>
+ *     <thead>
+ *          <tr>
+ *             <th colspan="2" rowspan="1">姓名</th>
+ *             <th colspan="2" rowspan="1">个人信息</th>
+ *          </tr>
+ *          <tr>
+ *             <th colspan="1" rowspan="1">职位</th>
+ *              <th colspan="1" rowspan="1">性别</th>
+ *          </tr>
+ *     </thead>
+ *     <tbody>
+ *         <tr>
+ *             <td colspan="2" rowspan="1">路飞</td>
+ *             <td colspan="1" rowspan="1">船长</td>
+ *             <td colspan="1" rowspan="1">男</td>
+ *          </tr>
+ *     </tbody>
+ * </table>
+ * 
+ * - 再看调用结构:
+ * 第一列:没有子列,所以colspan=1,rowspan=1
+ * 第二列:有两个子列,需要计算
+ *     第二列的第一个子列:没有子列,所以colspan=1,rowspan=1
+ *     第二列的第二个子列:没有子列,所以colspan=1,rowspan=1
+ *     第二列:有两个子列,所以colspan=2,rowspan=1
+ * 但是呢?第二个列有两个子列,那么它的前面那一列的colspan因该为2,这一步要如何实现呢?
+ * 实际上,只有有嵌套子列,那么所有子列的colspan值等于有嵌套子列的最大值
+ * 
+ * - col该如何渲染?
+ * 
+ * 
+ * - 看了element的实现:发现element中的表体下的td,colspan都是1
+ * 转变思路
+ * 第一列:没有子列,所以colspan=1,rowspan=1 -> col
+ * 第二列:有两个子列
+ *      第二列的第一个子列:没有子列,所以colspan=1,rowspan=1 -> col
+ *      第二列的第二个子列:没有子列,所以colspan=1,rowspan=1 -> col
+ * 但是呢?第二列有两个子列,则colspan=2,rowspan=1
+ * 
+ * 这样的话,col也好渲染
+ * col渲染的是没有嵌套子列的列
+ * 
+ * 下面开始计算colspan和rowspan,并将其保存到该列中
  */
+
 import {
     mergeOptions, 
     parseWidth,
@@ -267,7 +329,7 @@ export default {
         // console.log('888888888888', owner, parent, children, columnIndex);
         // console.log('777777777', children, parent.$refs.hiddenColumns.children)
 
-        // console.log('777777777', this.$slots)
+        console.log('777777777', this);
     },
 
     // render渲染

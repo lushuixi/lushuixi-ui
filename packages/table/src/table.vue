@@ -286,7 +286,7 @@ export default {
         // 更新列
         this.store.updateColumns();
 
-        // 
+        // 布局
         this.doLayout();
 
         this.resizeState = {
@@ -305,3 +305,11 @@ export default {
 
 }
 </script>
+
+<style>
+/* .y-table,
+.y-table__header,
+.y-table__body {
+    overflow: hidden;
+} */
+</style>
