@@ -1,0 +1,69 @@
+.y-table {
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    color: #606266;
+    font-size: 14px;
+}
+.y-table::before {
+    content: '';
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    height: 1px;
+    background-color: #ebeef5;
+}
+.y-table .hidden-columns {
+    position: absolute;
+    visibility: hidden;
+    z-index: -1;
+}
+.y-table .y-table__header,
+.y-table .y-table__body {
+    width: 100%;
+}
+.y-table td,
+.y-table th {
+    box-sizing: border-box;
+    border-bottom: 1px solid #ebeef5;
+    text-align: left;
+    padding: 12px 0;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+}
+.y-table th {
+    letter-spacing: 1px;
+}
+.y-table__body td {
+    transition: background-color .25s ease;
+}
+.y-table__body tr:hover td {
+    background-color: #f5f7fa;
+}
+.y-table .cell {
+    box-sizing: border-box;
+    width: 100%;
+    padding-left: 10px;
+    padding-right: 10px;
+    line-height: 23px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    word-break: break-all;
+}
+/* 表格数据为空 */
+.y-table__empty-block {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.y-table__empty-text {
+    color: #909399;
+    display: block;
+    line-height: 60px;
+    width: 50%;
+}

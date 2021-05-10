@@ -10,12 +10,10 @@
             <!-- <y-table-column prop="position" label="职位"></y-table-column> -->
             <!-- <y-table-column prop="value" label="悬赏金"></y-table-column> -->
             <y-table-column label="操作">
-                <!-- slot-scope="scope" -->
-                <template>
-                    <y-button>查看</y-button>
-                    <y-button>编辑</y-button>
-                    <y-button>删除</y-button>
-                    <!-- <span>{{scope.row}}</span> -->
+                <template slot-scope="scope">
+                    <y-button key="show" type="text" @click="handleShowClick(scope.row)">查看</y-button>
+                    <y-button key="edit" type="text" @click="handleEditClick(scope.row)">编辑</y-button>
+                    <y-button key="remove" type="text" @click="handleRemoveClick(scope.row)">删除</y-button>
                 </template>
             </y-table-column>
             <!-- <template v-slot:empty>
@@ -29,13 +27,8 @@
 </template>
 
 <script>
-import button from '../../packages/button/src/button.vue'
-import Table from '../../packages/table/src/table.vue'
 export default {
-  components: { button },
     data() {
-      
-        Table
         return {
             tableData: [
                 {
@@ -57,6 +50,18 @@ export default {
                     value: '200000000',
                 }
             ]
+        }
+    },
+
+    methods: {
+        handleShowClick(data) {
+            console.log('点击查看', data);
+        },
+        handleEditClick(data) {
+            console.log('点击编辑', data);
+        },
+        handleRemoveClick(data) {
+            console.log('点击删除', data);
         }
     },
 

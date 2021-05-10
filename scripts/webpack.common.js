@@ -46,7 +46,7 @@ module.exports = {
         rules: [
             {
                 // 对js文件的处理
-                test: /\.(jsx?|babel|es6)\$/,
+                test: /\.(jsx?|babel|es6)$/,
                 include: process.cwd(),
                 exclude: jsexclude,
                 loader: 'babel-loader',
@@ -55,6 +55,11 @@ module.exports = {
                 // 对vue文件的处理
                 test: /\.vue$/,
                 loader: 'vue-loader',
+                options: {
+                    compilerOptions: {
+                        preserveWhitespace: false,
+                    },
+                }
             }
         ]
     },

@@ -4,5 +4,6 @@
     "radio-group": "./packages/radio-group/index.js",
     "checkbox": "./packages/checkbox/index.js",
     "checkbox-group": "./packages/checkbox-group/index.js",
-    "table": "./packages/table/index.js"
+    "table": "./packages/table/index.js",
+    "table-column": "./packages/table-column/index.js"
 }

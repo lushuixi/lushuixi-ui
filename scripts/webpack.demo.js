@@ -42,7 +42,8 @@ module.exports = {
         rules: [
             {
                 // 将js|jsx|babel|es6文件语法由es6转为es5
-                test: /\.(jsx?|babel|es6)$/,
+                // test: /\.(jsx?|babel|es6)$/,
+                test: /\.jsx?$/,
                 include: process.cwd(),
                 exclude: jsexclude,
                 loader: 'babel-loader'
