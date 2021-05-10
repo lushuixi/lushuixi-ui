@@ -25,6 +25,13 @@ export default {
     methods: {
         /**
          * 设置colgroup中的col的width属性
+         * 通过控制colgroup中的col的宽度来绑定table单元格的宽度
+         * 通过使用colgroup标签, 向整个列应用样式, 而不需要重复为每个单元格或每一行设置样式
+         * col属性:
+         * - width:规定单元格的宽度
+         * th/td属性高:
+         * - colspan:规定单元格可横跨的列数
+         * - rowspan:规定单元格可横跨的行数
          * 
          * vue:获取当前组件所在的真实dom this.$el
          * js:获取dom节点方式之一
@@ -35,7 +42,7 @@ export default {
          * @returns undefined
          */
         onColumnsChange(layout) {
-            console.log('layout', layout);
+            // console.log('layout', layout);
 
             // 获取真实dom, 通过querySelectorAll筛选
             // querySelectorAll方法返回文档中匹配指定 CSS 选择器的所有元素，返回 NodeList 对象
@@ -65,6 +72,13 @@ export default {
         }
     },
 
+    created() {
+        // console.log('cr', this.tableLayout);
+        
+        // 添加观察器
+        this.tableLayout.addObserver(this);
+    },
+
     mounted() {
         // console.log('哈喽', this.tableLayout, this);
 
@@ -72,8 +86,18 @@ export default {
     },
 
     updated() {
-        console.log('模块更新', this.$el);
+        // console.log('模块更新', this.$el);
         this.onColumnsChange(this.tableLayout);
-    }
+    },
+
+    /**
+     * 为什么要destoryed?
+     * 
+     * Vue中父子组件的生命周期?
+     */
+    destroyed() {
+        // 移出观察器
+        this.tableLayout.removeObserver(this);
+    },
 
 }

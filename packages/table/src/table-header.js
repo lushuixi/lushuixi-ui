@@ -37,11 +37,19 @@ export default {
         })
     }, 
 
-    watch: {
-        columns(newValue) {
-            console.log('header-监听columns变化', newValue)
-        },
+    // watch: {
+    //     columns(newValue) {
+    //         console.log('header-监听columns变化', newValue)
+    //     },
+    // },
+
+    created() {
+        console.log('created-header', this);
     },
+
+    // updated() {
+    //     console.log('table-header', this.$el)
+    // },
 
     render(h) {
         // console.log('YTableHeader-render函数', this._l);

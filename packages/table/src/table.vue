@@ -9,7 +9,7 @@
         接下来, 如何展示呢? -- 表格布局
 
         样式----------------------
-        如何保证th和td同宽?
+        如何保证th和td同宽? -- 通过table下的colgroup的col宽度的设置, 这样便不用重复设置每个单元格的宽度
         给table-column添加width属性
     -->
     <div class="y-table"
@@ -41,11 +41,25 @@
                     width: bodyWidth
                 }"></table-body>
         </div>
+        <!-- 表格数据为空 -->
+        <div
+            v-if="!data || data.length === 0"
+            class="y-table__empty-block"
+            ref="emptyBolck">
+            <span class="y-table__empty-text">
+                <!-- 自定义表格为空时的数据展示 -->
+                <slot name="empty">{{emptyText}}</slot>
+            </span>
+        </div>
         <!-- 表尾 -->
     </div>
 </template>
 
 <script>
+/**
+ * debounce去抖动
+ * 参考:https://www.cnblogs.com/songyz/p/10310491.html
+ */
 import {
     debounce, 
     throttle
@@ -58,7 +72,8 @@ import {
     mapStates
 } from './store/helper';
 import {
-    addResizeListener
+    addResizeListener,
+    removeEventListener
 } from '../../../src/utils/resize-event';
 
 let tableIdSeed = 1;
@@ -99,6 +114,15 @@ export default {
         fit: {
             type: Boolean,
             default: true
+        },
+
+        /**
+         * 表格数据为空时的文字
+         * 空数据时显示的文本内容，也可以通过 slot="empty" 设置
+         */
+        emptyText: {
+            type: String,
+            default: '暂无数据',
         },
 
     },
@@ -152,7 +176,7 @@ export default {
          */
         syncPostion: throttle(20, function() {
             const {scrollLeft, scrollTop, offsetWidth, scrollWidth} = this.bodyWrapper;
-            console.log('syncPosition', scrollLeft, scrollTop, offsetWidth, scrollWidth)
+            // console.log('syncPosition', scrollLeft, scrollTop, offsetWidth, scrollWidth)
         }),
 
         // 监听窗口尺寸变化的响应的事件
@@ -165,12 +189,14 @@ export default {
             const el = this.$el;
 
             const {width: oldWidth, height: oldHeight} = this.resizeState;
-            console.log('old', oldWidth, oldHeight, el.offsetWidth);
+            // console.log('old', oldWidth, oldHeight, el.offsetWidth);
 
             const width = el.offsetWidth;
             if(oldWidth !== width) {
                 shouldUpdateLayout = true;
             }
+
+            // console.log('shouldUpdateLayout', shouldUpdateLayout)
 
             if(shouldUpdateLayout) {
                 this.resizeState.width = width;
@@ -182,7 +208,7 @@ export default {
 
         // 绑定事件
         bindEvents() {
-            console.log('999', this.bodyWrapper);
+            // console.log('999', this.bodyWrapper);
             // 监听滚动
             this.bodyWrapper.addEventListener('scroll', 
                 this.syncPostion,
@@ -195,39 +221,16 @@ export default {
             }
         },
 
+        // 取消绑定
+        unbindEvents() {
+            if(this.fit) {
+                removeEventListener(this.$el, this.resizeListener)
+            }
+        },
+
         doLayout() {
             this.layout.updateColumnsWidth();
         }
-    },
-
-    created() {
-        this.tableId = 'y-table_' + tableIdSeed++;
-
-        // this.debouncedUpdateLayout = debounce(50, () => this.doLayout());
-    },
-
-    mounted() {
-        // console.log('6666', this);
-        // 在这里试是不行的
-        // let res = mapStates.call(this, {
-        //     columns: 'columns',
-        //     tableData: 'data',
-        // })
-        console.log('88888888', this);
-
-        // 绑定监听页面尺寸变化事件
-        this.bindEvents();
-
-        this.doLayout();
-
-        this.resizeState = {
-            width: this.$el.offsetWidth,
-            height: this.$el.offsetHeight,
-        }
-
-        // 监听窗口尺寸的变化,更新col的宽度
-
-        this.$ready = true;
     },
 
     /**
@@ -247,7 +250,58 @@ export default {
                 this.store.commit('setData', value);
             }
         }
-    }
+    },
+
+    /**
+     * 子组件: table-header和table-body
+     * $children: [] 空数组
+     */
+    created() {
+        // debugger;
+        this.tableId = 'y-table_' + tableIdSeed++;
+
+        // this.debouncedUpdateLayout = debounce(50, () => this.doLayout());
+    },
+
+    beforeMount() {
+        debugger;
+    },
+
+    /**
+     * $children: [table-column组件, table-header组件, table-body组件]
+     */
+    mounted() {
+        // debugger;
+        // console.log('6666', this);
+        // 在这里试是不行的
+        // let res = mapStates.call(this, {
+        //     columns: 'columns',
+        //     tableData: 'data',
+        // })
+        console.log('88888888', this);
+
+        // 绑定监听页面尺寸变化事件
+        this.bindEvents();
+
+        // 更新列
+        this.store.updateColumns();
+
+        // 
+        this.doLayout();
+
+        this.resizeState = {
+            width: this.$el.offsetWidth,
+            height: this.$el.offsetHeight,
+        }
+
+        // 监听窗口尺寸的变化,更新col的宽度
+
+        this.$ready = true;
+    },
+
+    destroyed() {
+        this.unbindEvents();
+    },
 
 }
 </script>
@@ -257,6 +311,10 @@ export default {
         box-sizing: border-box;
         position: relative;
         width: 100%;
+        padding: 0;
+        margin: 0;
+        color: #606266;
+        font-size: 14px;
     }
     .y-table::before {
         content: '';
@@ -271,13 +329,6 @@ export default {
         visibility: hidden;
         z-index: -1;
     }
-    .y-table .cell {
-        box-sizing: border-box;
-        width: 100%;
-        padding-left: 10px;
-        padding-right: 10px;
-        line-height: 23px;
-    }
     .y-table .y-table__header,
     .y-table .y-table__body {
         width: 100%;
@@ -285,11 +336,44 @@ export default {
     .y-table td,
     .y-table th {
         box-sizing: border-box;
+        border-bottom: 1px solid #ebeef5;
         text-align: left;
         padding: 12px 0;
         vertical-align: middle;
+        text-overflow: ellipsis;
     }
-    .y-table td {
-        border-top: 1px solid #ebeef5;
+    .y-table th {
+        letter-spacing: 1px;
+    }
+    .y-table__body td {
+        transition: background-color .25s ease;
+    }
+    .y-table__body tr:hover td {
+        background-color: #f5f7fa;
+    }
+    .y-table .cell {
+        box-sizing: border-box;
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+        line-height: 23px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+        word-break: break-all;
+    }
+    /* 表格数据为空 */
+    .y-table__empty-block {
+        width: 100%;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .y-table__empty-text {
+        color: #909399;
+        display: block;
+        line-height: 60px;
+        width: 50%;
     }
 </style>

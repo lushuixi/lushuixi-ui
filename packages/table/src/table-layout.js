@@ -14,6 +14,8 @@ class TableLayout {
 
         this.bodyWidth = null;
 
+        this.observers = [];
+
         // 赋值
         for(let name in options) {
             if(options.hasOwnProperty(name)) {
@@ -43,7 +45,8 @@ class TableLayout {
      * 如果这样的列只有一个, 则把剩余的宽度都分给它
      * 如果这样的列有多个, 则按照最小宽度的比例分配剩余的宽度(而非平均分配)
      * 
-     * 设置columns值
+     * 更新columns的realWidth值
+     * 更新之后, 表头和表尾dom都需要相应的发生变化
      */
     updateColumnsWidth() {
 
@@ -77,7 +80,7 @@ class TableLayout {
 
             // 如果没有滚动条
             // 通过bodyMinWidth来判断
-            console.log('999', bodyMinWidth <= bodyWidth - scrollYWidth)
+            // console.log('999', bodyMinWidth <= bodyWidth - scrollYWidth)
             if(bodyMinWidth <= bodyWidth - scrollYWidth) {
 
                 // 没有分配宽度的列的总宽
@@ -92,7 +95,7 @@ class TableLayout {
                     
                     // 计算倍数
                     const flexWidthPerPixel = totalFlexWidth / allColumnsWidth;
-                    console.log('3333', flexWidthPerPixel, allColumnsWidth, totalFlexWidth);
+                    // console.log('3333', flexWidthPerPixel, allColumnsWidth, totalFlexWidth);
 
                     // 非第一个列的宽度
                     let noneFirstWidth = 0;
@@ -127,7 +130,64 @@ class TableLayout {
         }
         // console.log('888', flattenColumns, flexColumns)
 
+        this.notifyObservers('columns');
+    }
+
+    /**
+     * 没有设置观察器:
+     * table.vue 设置页面窗口尺寸变化的监听器
+     * 如果页面窗口宽度发生变化, 便会触发table-layout.updateColumnsWidth方法,以更新列的realWidth即states.columns发生变化
+     * 但是这个变化可能不会触及table-header和table-body的col的变化(只有table-body下的col变化了,table-header并没有变化)
+     * 不知道是为什么? 什么变化会触发dom的更新?
+     * 
+     * 设置观察器, 便可以保证通知到dom更新
+     * table-header和table-body分别使用layout-observer进行混入, 分别创建一个观察器, 插入到观察器数组
+     * 如果页面窗口宽度发生变化, 便会触发table-layout.updateColumnsWidth方法,以更新列的realWidth即states.columns发生变化
+     * 从而触发观察器以通知dom更新(onColumnsChange更新col的width值)
+     * 
+     * @param {VNode} observer 
+     */
+
+    /**
+     * 添加观察器
+     * @param {VNode} observer 
+     */
+    addObserver(observer) {
+        // console.log('添加观察器', observer);
+
+        this.observers.push(observer);
+    }
+    
+    /**
+     * 移出观察器
+     * @param {VNode} observe 
+     */
+    removeObserver(observe) {
+        // console.log('移出观察器', observe, this.observers);
+        const index = this.observers.indexOf(observe);
+        if(index !== -1) {
+            this.observers.splice(index, 1);
+        }
+    }
+
+    /**
+     * 通知观察器处理
+     * @param {String} event 
+     */
+    notifyObservers(event) {
+        const observers = this.observers;
+        // console.log('notifyObservers', event, this.observers);
+        
+        observers.forEach((observe) => {
+            switch(event) {
+                case 'columns': // 更新列的dom
+                    observe.onColumnsChange(this);
+                    break;
+                default: 
+                    throw new Error(`Table Layout don't have event ${event}`);
+            }
+        });
     }
 }
 
-export default TableLayout;
+export default TableLayout; 

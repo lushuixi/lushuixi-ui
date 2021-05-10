@@ -16,12 +16,31 @@ export default Vue.extend({
                 data: [],
 
                 // 列属性
+                _columns: [],
                 columns: [],
             }
         }
     },
 
     methods: {
+        // 更新列
+        updateColumns() {
+            const states = this.states;
 
+            const _columns = states._columns || [];
+
+            states.columns = _columns;
+
+            // console.log('更新列999999',_columns, states.columns);
+        },
+
+        // 更新DOM
+        // scheduleLayout(needUpdateColumns) {
+        //     if(needUpdateColumns) {
+        //         this.updateColumns();
+        //     }
+
+        //     this.table.debouncedUpdateLayout();
+        // }
     }
 })

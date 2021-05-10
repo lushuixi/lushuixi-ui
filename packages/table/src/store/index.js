@@ -14,6 +14,7 @@ Watcher.prototype.mutations = {
         // console.log('setData', states, data);
         states.data = data;
     },
+
     /**
      * 向公共数据池中的columns插入列属性
      * splice() 方法向/从数组中添加/删除项目，然后返回被删除的项目(会改变原有数组)
@@ -25,7 +26,7 @@ Watcher.prototype.mutations = {
      */
     insertColumn(states, column, index, parent) {
         // console.log('insertColumn', states, column, index, parent);
-        let array = states.columns;
+        let array = states._columns;
         
         if(typeof index !== 'undefined') {
             array.splice(index, 0, column);
@@ -34,8 +35,14 @@ Watcher.prototype.mutations = {
         }
 
         // console.log('array', array, states)
-
-    }
+        console.log('8', array, this.table.$ready);
+        // if(this.table.$ready) {
+        //     // 更新列
+        //     this.updateColumns();
+        //     // 更新 DOM
+        //     this.scheduleLayout();
+        // }
+    },
 }
 
 /**

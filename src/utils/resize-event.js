@@ -44,3 +44,22 @@ export const addResizeListener = function(element, fn) {
 
     // console.log('e', element.__resizeListeners__);
 }
+
+/**
+ * 移出指定的监听事件
+ * @param {Object} element 
+ * @param {Function} fn 
+ * @returns 
+ */
+export const removeEventListener = function(element, fn) {
+
+    if(!element || !element.__resizeListeners__) return;
+
+    // 删除
+    element.__resizeListeners__.splice(element.__resizeListeners__.indexOf(fn), 1);
+
+    if(!element.__resizeListeners__.length) {
+        element.__ro__.disconnect();
+    }
+
+}

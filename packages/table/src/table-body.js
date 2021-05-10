@@ -50,7 +50,7 @@ export default {
          * @param {Number} index 索引 
          */
         isColumnHidden(index) {
-            console.log('isColumnHidden', index)
+            console.log('isColumnHidden', index);
         },
 
         /**
@@ -70,7 +70,6 @@ export default {
             };
         },
         
-
         /**
          * 
          * @param {Object} row 行数据
@@ -129,6 +128,10 @@ export default {
     //     columns(newValue) {
     //         console.log('body-监听columns变化', newValue)
     //     },
+    // },
+
+    // updated() {
+    //     console.log('table-body', this.$el)
     // },
 
     render(h) {
