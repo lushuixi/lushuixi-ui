@@ -1,3 +1,7 @@
+/**
+ * table-header:table子组件,表头
+ */
+
 import {
     mapStates,
 } from './store/helper';
@@ -5,6 +9,8 @@ import LayoutObserver from './layout-observer';
 
 /**
  * th和td标签中属性colspan和rowspan有什么意义吗?
+ * - colspan 规定单元格横跨列数
+ * - rowspan 规定单元格横跨行数
  */
 
 const convertToRows = (columns) => {
@@ -43,9 +49,9 @@ export default {
     //     },
     // },
 
-    created() {
-        console.log('created-header', this);
-    },
+    // created() {
+        // console.log('created-header', this);
+    // },
 
     // updated() {
     //     console.log('table-header', this.$el)

@@ -1,5 +1,7 @@
 /**
  * 混入布局观察器
+ * LayoutObserver布局观察器
+ * 用于表格布局组件: table-header和table-body
  */
 export default {
 

@@ -10,14 +10,12 @@
             <!-- <y-table-column prop="position" label="职位"></y-table-column> -->
             <!-- <y-table-column prop="value" label="悬赏金"></y-table-column> -->
             <y-table-column label="操作">
-                <!-- <template slot-scope="scope">
-                    {{'123' || scope}}
-                </template> -->
-                <template slot-scope="scope">
-                    <!-- <button>查看</button>
-                    <button>编辑</button>
-                    <button>删除</button> -->
-                    <span>{{scope.row}}</span>
+                <!-- slot-scope="scope" -->
+                <template>
+                    <y-button>查看</y-button>
+                    <y-button>编辑</y-button>
+                    <y-button>删除</y-button>
+                    <!-- <span>{{scope.row}}</span> -->
                 </template>
             </y-table-column>
             <!-- <template v-slot:empty>

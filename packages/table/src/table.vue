@@ -264,7 +264,7 @@ export default {
     },
 
     beforeMount() {
-        debugger;
+        // debugger;
     },
 
     /**

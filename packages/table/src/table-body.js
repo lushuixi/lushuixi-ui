@@ -1,3 +1,7 @@
+/**
+ * table-body:table子组件,表体
+ */
+
 import {
     mapStates,
 } from './store/helper';

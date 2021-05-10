@@ -35,7 +35,7 @@ Watcher.prototype.mutations = {
         }
 
         // console.log('array', array, states)
-        console.log('8', array, this.table.$ready);
+        // console.log('8', array, this.table.$ready);
         // if(this.table.$ready) {
         //     // 更新列
         //     this.updateColumns();

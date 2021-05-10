@@ -1,13 +1,13 @@
 <template>
-    <div class="l-button">
-        buttonbuttonbuttonbutton
+    <div class="y-button">
+        <slot></slot>
     </div>
 </template>
 
 <script>
 export default {
 
-    name: 'LButton',
+    name: 'YButton',
 
 }
 </script>

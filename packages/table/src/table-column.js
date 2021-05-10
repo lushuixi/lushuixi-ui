@@ -1,4 +1,6 @@
 /**
+ * table-column:table子组件,列
+ * 
  * 注意: 该文件不是vue文件,而是js文件
  * 使用jsx语言渲染dom(需要安装相应的插件以支持JSX)
  * 官方文档: https://cn.vuejs.org/v2/guide/render-function.html
@@ -200,7 +202,7 @@ export default {
      */
     created() {
         // debugger;
-        console.log('cre', this)
+        // console.log('cre', this)
         // 定义table-column组件的columnId
         const parent = this.columnOrTableParent;
         // 是否是子列, 如果两者不相等,则是子列(直接父组件也是table-column)
