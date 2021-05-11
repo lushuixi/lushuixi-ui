@@ -67,3 +67,12 @@
     line-height: 60px;
     width: 50%;
 }
+/* 带有边框 */
+.y-table__border {
+    border-left: 1px solid #ebeef5;
+    border-top: 1px solid #ebeef5;
+}
+.y-table__border td,
+.y-table__border th {
+    border-right: 1px solid #ebeef5;
+}

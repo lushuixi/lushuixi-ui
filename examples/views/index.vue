@@ -27,15 +27,24 @@
             :columns="columns"
             :data="tableData"/> -->
 
-        <y-table>
+        <y-table 
+            :data="tableData"
+            border>
             <y-table-column prop="name" label="姓名"></y-table-column>
-            <y-table-column label="个人信息">
-                <y-table-column prop="position" label="职位"></y-table-column>
-                <y-table-column prop="sex" label="性别"></y-table-column>
+            <y-table-column label="介绍">
+                <y-table-column label="个人信息">
+                    <y-table-column prop="position" label="职位"></y-table-column>
+                    <y-table-column prop="sex" label="性别"></y-table-column>
+                    <y-table-column prop="home" label="家乡"></y-table-column>
+                </y-table-column>
+                <y-table-column label="个人喜好">
+                    <y-table-column prop="likes" label="爱好"></y-table-column>
+                    <y-table-column prop="value" label="悬赏金"></y-table-column>
+                </y-table-column>
             </y-table-column>
         </y-table>
 
-        <table border>
+        <!-- <table border>
             <thead>
                 <tr>
                     <th colspan="1" rowspan="2">姓名</th>
@@ -63,12 +72,11 @@
                     <td colspan="1" rowspan="1">男</td>
                 </tr>
             </tbody>
-        </table>
+        </table> -->
     </div>
 </template>
 
 <script>
-import Table from '../../packages/table/src/table.vue';
 import StandardTable from '../components/standardTable';
 export default {
     components: {

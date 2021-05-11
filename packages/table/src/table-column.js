@@ -63,10 +63,35 @@
  *      第二列的第二个子列:没有子列,所以colspan=1,rowspan=1 -> col
  * 但是呢?第二列有两个子列,则colspan=2,rowspan=1
  * 
+ * <table>
+ *     <thead>
+ *          <tr>
+ *             <th colspan="1" rowspan="2">姓名</th>
+ *             <th colspan="2" rowspan="1">个人信息</th>
+ *          </tr>
+ *          <tr>
+ *             <th colspan="1" rowspan="1">职位</th>
+ *              <th colspan="1" rowspan="1">性别</th>
+ *          </tr>
+ *     </thead>
+ *     <tbody>
+ *         <tr>
+ *             <td colspan="1" rowspan="1">路飞</td>
+ *             <td colspan="1" rowspan="1">船长</td>
+ *             <td colspan="1" rowspan="1">男</td>
+ *          </tr>
+ *     </tbody>
+ * </table>
+ * 
  * 这样的话,col也好渲染
  * col渲染的是没有嵌套子列的列
  * 
  * 下面开始计算colspan和rowspan,并将其保存到该列中
+ * 
+ * table-header 和 table-body 的 colspan 和 rowspan 是不一样的
+ * 处理:单独计算
+ * 如何单独计算?
+ * table-column:需要保存列的信息?如何嵌套保存呢?
  */
 
 import {
@@ -80,6 +105,9 @@ import {
     defaultRenderCell,
 } from './config';
 
+/**
+ * 特点: 同一批组件调用,该值会发生变化
+ */
 let columnIdSeed = 1;
 
 export default {
@@ -334,7 +362,7 @@ export default {
 
     // render渲染
     render(h) {
-        console.log('table-column', h,  this.$slots);
+        // console.log('table-column', h,  this.$slots);
         // 默认插槽,替子元素占位
         // slots 也要渲染，需要计算合并表头
         // 结构比较简单, 就不用jsx了

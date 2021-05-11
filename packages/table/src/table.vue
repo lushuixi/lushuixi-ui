@@ -99,7 +99,10 @@ export default {
         },
 
         // border需为布尔类型Boolean
-        border: Boolean,
+        border: {
+            type: Boolean,
+            default: false,
+        },
 
         // 是否显示表头, 布尔类型, 默认为true
         showHeader: {

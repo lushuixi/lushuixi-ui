@@ -17,7 +17,7 @@ function hasOwn(obj, key) {
  * @returns Object
  */
 export function mergeOptions(defaults, config) {
-    console.log('mergeOptions', defaults, config);
+    // console.log('mergeOptions', defaults, config);
     // 定义新值保存处理结果(因为更改对象参数会更改原值,对象传参是按地址传的)
     let options = {};
     let key;

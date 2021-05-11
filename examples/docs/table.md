@@ -170,3 +170,75 @@ render(h) {
 ```
 渲染函数使用场景
 
+### 支持嵌套表格
+
+#### 原生实现
+```
+<table border>
+    <thead>
+        <tr>
+            <th colspan="1" rowspan="2">姓名</th>
+            <th colspan="2" rowspan="1">个人信息</th>
+        </tr>
+        <tr>
+            <th colspan="1" rowspan="1">职位</th>
+            <th colspan="1" rowspan="1">性别</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="1" rowspan="1">路飞</td>
+            <td colspan="1" rowspan="1">船长</td>
+            <td colspan="1" rowspan="1">男</td>
+        </tr>
+    </tbody>
+</table>
+```
+
+#### 实现思路
+- 表格支持嵌套子列, 先考虑常见的几种表格结构。
+- 常见表格机构:
+    - 参考:http://www.doc88.com/p-7758454847013.html
+    - 参考:https://blog.csdn.net/Li_dengke/article/details/103357921
+- 有一下几种形式:
+    - 一种是只是在表头中, 嵌套子列展示
+    - 一种是只在表体中, 嵌套展示数据项
+    - 一种既在表头, 也在表体
+
+##### 表头嵌套子列
+先来考虑实现表头中, 首先表现在表头table-header中, 从原生实现嵌套结构中可以看到,嵌套子列需要多行展示且需计算列的colspan和rowspan值。
+- table-column
+    - 如果该列有父列,则将该列push到父列的children,形成一个树状结构(states.originColumns)
+- table-header
+    - colspan:如果有嵌套子列,则取自嵌套子列的长度;否则取1
+    - rowspan:列所在的层(包括自身层)到最底层的深度
+    - level:列所在的层级
+    - col单元格展示叶子层的列(states.columns)
+    - thead标题展示多行嵌套子列(convertToRows(originColumns))
+    - 将states.originColumns由树状结构处理成要展示的多行数据形成的数组(convertToRows(originColumns))
+- table-body
+    - colspan:1
+    - rowspan:1
+    - 单元格展示叶子层的列(states.columns)
+- states.columns
+    - table-header单元格展示叶子层的列
+    - table-body单元格展示叶子层的列
+
+#### 最终实现结构
+```
+<y-table 
+    :data="tableData">
+    <y-table-column prop="name" label="姓名"></y-table-column>
+    <y-table-column label="介绍">
+        <y-table-column label="个人信息">
+            <y-table-column prop="position" label="职位"></y-table-column>
+            <y-table-column prop="sex" label="性别"></y-table-column>
+            <y-table-column prop="home" label="家乡"></y-table-column>
+        </y-table-column>
+        <y-table-column label="个人喜好">
+            <y-table-column prop="likes" label="爱好"></y-table-column>
+            <y-table-column prop="value" label="悬赏金"></y-table-column>
+        </y-table-column>
+    </y-table-column>
+</y-table>
+```

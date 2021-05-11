@@ -19,6 +19,14 @@ Watcher.prototype.mutations = {
      * 向公共数据池中的columns插入列属性
      * splice() 方法向/从数组中添加/删除项目，然后返回被删除的项目(会改变原有数组)
      * arrayObject.splice(index,howmany,item1,.....,itemX) howmany为0则添加
+     * 
+     * 知道了parent, 标识到
+     * 如果有父组件,则将其插入到父组件的children?但是此时父组件还没有加载呢,怎么办呢?
+     * 
+     * table-header和table-body都需要这个columns来计算colspan和rowspan值
+     * table-header:columns中的colspan和rowspan
+     * table-body:动态计算
+     * 
      * @param {Object} states 
      * @param {String} column 
      * @param {String} index 
@@ -27,6 +35,12 @@ Watcher.prototype.mutations = {
     insertColumn(states, column, index, parent) {
         // console.log('insertColumn', states, column, index, parent);
         let array = states._columns;
+
+        if(parent) {
+            array = parent.children;
+            if(!array) array = parent.children = [];
+        }
+        // console.log('insert', column, parent, array);
         
         if(typeof index !== 'undefined') {
             array.splice(index, 0, column);
