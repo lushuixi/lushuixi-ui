@@ -14,9 +14,15 @@
     -->
     <div class="y-table"
         :class="[
-            {'y-table__border': border},
+            {
+                'y-table__border': border,
+                'y-table__scrollable-y': layout.scrollY,
+            },
             align ? 'y-table__' + align : '',
-        ]">
+        ]"
+        :style="{
+            'height': height || '',
+        }">
         <!-- 原生-子节点-列的渲染 -->
         <div class="hidden-columns" ref="hiddenColumns">
             <slot></slot>
@@ -35,7 +41,8 @@
         <!-- 表体 -->
         <div
             class="y-table__body-wrapper"
-            ref="bodyWrapper">
+            ref="bodyWrapper"
+            :style="[bodyHeight]">
             <table-body
                 :store="store"
                 :style="{
@@ -76,6 +83,7 @@ import {
     addResizeListener,
     removeEventListener
 } from '../../../src/utils/resize-event';
+import { parseHeight } from './utils';
 
 let tableIdSeed = 1;
 export default {
@@ -132,6 +140,21 @@ export default {
         // 文本对齐方式
         align: String,
 
+        /**
+         * 表格固定高度(固定数字,单位px), 默认auto
+         * 如果设置了height, 且容器高度超过了该值, 则固定表头
+         * 首先:height作用于整个table
+         * 其次:整个表格实际高度超过了height值, 则固定表头table-header
+         */
+        height: [String, Number],
+
+        /**
+         * 流体高度
+         * 若表格所需的高度大于最大高度，则会显示一个滚动条
+         * 调用处:max-height
+         */
+        maxHeight: [String, Number],
+
     },
 
     computed: {
@@ -140,6 +163,25 @@ export default {
             // console.log('55', bodyWidth + 'px')
             
             return bodyWidth + 'px';
+        },
+
+        bodyHeight() {
+            const {headerHeight, bodyHeight} = this.layout;
+            // 如果高度存在
+            if(this.height) {
+                return {
+                    height: bodyHeight ? bodyHeight + 'px' : ''
+                };
+            } else if (this.maxHeight) {
+                const maxHeight = parseHeight(this.maxHeight);
+                if(typeof maxHeight === 'number') {
+                    return {
+                        // 'max-height': (maxHeight - headerHeight) + 'px',
+                        'max-height': bodyHeight ? bodyHeight + 'px' : ''
+                    };
+                }
+            }
+            return {};
         },
 
         bodyWrapper() {
@@ -180,10 +222,11 @@ export default {
     methods: {
         /**
          * throttle 节流
+         * 滚动监听回调
          */
         syncPostion: throttle(20, function() {
             const {scrollLeft, scrollTop, offsetWidth, scrollWidth} = this.bodyWrapper;
-            // console.log('syncPosition', scrollLeft, scrollTop, offsetWidth, scrollWidth)
+            console.log('syncPosition', scrollLeft, scrollTop, offsetWidth, scrollWidth)
         }),
 
         // 监听窗口尺寸变化的响应的事件
@@ -256,7 +299,23 @@ export default {
                 // 提交data到公共数据池
                 this.store.commit('setData', value);
             }
-        }
+        },
+
+        // 立即监听高度
+        height: {
+            immediate: true,
+            handler(value) {
+                this.layout.setHeight(value);
+            }
+        },
+
+        // 立即监听最大高度
+        maxHeight: {
+            immediate: true,
+            handler(value) {
+                this.layout.setMaxHeight(value);
+            }
+        },
     },
 
     /**
@@ -285,7 +344,7 @@ export default {
         //     columns: 'columns',
         //     tableData: 'data',
         // })
-        console.log('88888888', this);
+        console.log('88888888', this, this.layout);
 
         // 绑定监听页面尺寸变化事件
         this.bindEvents();
@@ -314,9 +373,12 @@ export default {
 </script>
 
 <style>
-/* .y-table,
-.y-table__header,
-.y-table__body {
+.y-table,
+.y-table__body-wrapper {
     overflow: hidden;
-} */
+    box-sizing: border-box;
+}
+.y-table__scrollable-y .y-table__body-wrapper {
+    overflow-y: auto;
+}
 </style>

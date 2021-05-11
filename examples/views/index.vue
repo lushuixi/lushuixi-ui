@@ -30,7 +30,8 @@
         <y-table 
             :data="tableData"
             border
-            align="center">
+            align="center"
+            max-height="360px">
             <y-table-column prop="name" label="姓名" align="center"></y-table-column>
             <y-table-column label="介绍" align="center">
                 <y-table-column label="个人信息" align="center">
@@ -195,9 +196,4 @@ export default {
 </script>
 
 <style scoped>
-.table-box {
-    /* width: 960px; */
-    margin: 0 auto;
-    height: 200px;
-}
 </style>

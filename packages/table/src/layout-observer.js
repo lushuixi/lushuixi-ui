@@ -71,6 +71,10 @@ export default {
                     col.setAttribute('width', column.realWidth || column.width);
                 }
             }
+        },
+
+        onScrollableChange(layout) {
+            console.log('onScrollableChange', layout)
         }
     },
 

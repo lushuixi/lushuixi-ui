@@ -1,5 +1,9 @@
 import Vue from 'vue';
 
+import {
+    parseHeight,
+} from './utils';
+
 /**
  * TableLayout 定义表格的整体相关属性和方法
  * 用于table.vue整体控制table
@@ -18,6 +22,14 @@ class TableLayout {
         this.bodyWidth = null;
 
         this.observers = [];
+
+        this.height = null;
+        this.tableHeight = null;
+        this.headerHeight = null;
+        this.bodyHeight = null; // table height - table-header height
+
+        this.scrollX = false;
+        this.scrollY = false;
 
         // 赋值
         for(let name in options) {
@@ -39,6 +51,119 @@ class TableLayout {
      * 公共的表格处理方法
      * 如: setHeight设置高度等等
      */
+
+    /**
+     * Vue.$refs 数组
+     * 可以解构
+     * 
+     * js获取dom节点的高度
+     * 参考:https://blog.csdn.net/qq_35430000/article/details/80277587
+     * clientHeight:包括padding,但不包括border、水平滚动条、margin的元素的高度(对于inline的元素该属性一直是0,单位px)
+     * offsetHeight:包括padding、border、水平滚动条,但不包括margin的元素的高度(对于inline的元素该属性一直是0,单位px)
+     * scrollHeight:子元素比父元素稿,父元素不想被子元素撑的一样高就显示出了滚动条,在滚动的过程中本元素有部分被隐藏.scrollHeight>=clientHeight恒成立
+     *  - 表示当前不可见部分的元素的高度, 而可见部分的高度是clientHeight
+     *  - 有滚动条时讨论scrollHeight才有意义,在没有滚动条时scrollHeight==clientHeight恒成立,单位px
+     * scrollTop:有滚动条时,滚动条向下滚动的距离也就是顶部被遮住部分的高度。在没有滚动条时scrollTop==0恒成立
+     * offsetTop:当前元素顶部距离最近父元素顶部的距离,和没有滚动条没有关系
+     */
+    updateElsHeight() {
+        // 如果table还没有渲染出真实dom节点, 则等其渲染完再调用
+        if(!this.table.$ready) return Vue.nextTick(() => this.updateElsHeight());
+        // console.log('更新高度', this.table.$ready);
+
+        const {headerWrapper} = this.table.$refs;
+
+        // console.log('更新高度', this);
+        if(this.showHeader && !headerWrapper) return;
+
+        // 获取header高度
+        // 但是此时,table-header可能还没有完全渲染出来,所以此时头部高度是0
+        // 所以使用Vue.nextTick等更新后再执行该方法
+        const headerHeight = this.headerHeight = headerWrapper.offsetHeight;
+        if (this.showHeader && headerWrapper.offsetWidth > 0 && (this.table.columns || []).length > 0 && headerHeight < 2) {
+            return Vue.nextTick(() => this.updateElsHeight());
+        }
+
+        // 整体表格高度
+        // 并计算出表体的高度
+        const tableHeight = this.tableHeight = this.table.$el.clientHeight;
+        if(this.height !== null) {
+            this.bodyHeight = tableHeight - headerHeight;
+            // console.log('高度', tableHeight, headerHeight, this.bodyHeight)
+        }
+
+        // console.log('高度', this.height, this.bodyHeight)
+
+        // 纵向滚动更新
+        this.updateScrollY();
+
+        // 通知观察器-滚动
+        this.notifyObservers('scrollable');
+
+    }
+
+    /**
+     * 更新this.scrollY:是否需要滚动
+     * @returns 
+     */
+    updateScrollY() {
+        const height = this.height;
+        
+        // 如果高度为null,则无需设置滚动
+        if(height === null) return false;
+
+        const bodyWrapper = this.table.bodyWrapper;
+        if(this.table.$el && bodyWrapper) {
+            const body = bodyWrapper.querySelector('.y-table__body');
+            const prevScrollY = this.scrollY;
+            // 是否滚动
+            const scrollY = body.offsetHeight > this.bodyHeight;
+            this.scrollY = scrollY;
+            return prevScrollY !== scrollY;
+        }
+
+        return false;
+    }
+
+    /**
+     * 设置表格高度
+     * 设置了表格的固定高度,则如果表体的高度过高,则出现表体滚动条,从而使表头固定
+     * @param {Number/String} height 
+     */
+    setHeight(value, prop = 'height') {
+        // console.log('setHeight', height, parseHeight(height));
+        if(Vue.prototype.$isServer) return;
+
+        const el = this.table.$el;
+
+        value = parseHeight(value);
+        // 不管prop是height还是max-height, 都设置给this.height
+        this.height = value;
+
+        // console.log('el', el, this.table.$ready);
+
+        // 获取table真实的dom节点
+        // 此时,table节点可能还没有渲染出真实的dom节点
+        // 怎么赋值呢? -- Vue.nextTick 在下次 DOM 更新循环结束之后执行延迟回调
+        if(!el && (value || value === 0)) return Vue.nextTick(() => this.setHeight(value, prop));
+
+        if(typeof value === 'number') {
+            el.style[prop] = value + 'px';
+        } else if (typeof value === 'string') {
+            el.style[prop] = value;
+        }
+
+        // 更新高度
+        this.updateElsHeight();
+    }
+
+    /**
+     * 设置表格最大高度
+     * @param {Number/String} value 
+     */
+    setMaxHeight(value) {
+        this.setHeight(value, 'max-height');
+    }
 
     /**
      * Vue.prototype.$isServer 是什么意思?
@@ -185,6 +310,10 @@ class TableLayout {
             switch(event) {
                 case 'columns': // 更新列的dom
                     observe.onColumnsChange(this);
+                    break;
+                case 'scrollable':
+                    // console.log('观察器', observe);
+                    observe.onScrollableChange(this);
                     break;
                 default: 
                     throw new Error(`Table Layout don't have event ${event}`);

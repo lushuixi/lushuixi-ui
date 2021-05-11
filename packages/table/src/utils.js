@@ -30,6 +30,7 @@ export function mergeOptions(defaults, config) {
         if(hasOwn(config, key)) {
             let value = config[key];
             if(typeof value !== 'undefined') {
+                // 新值会覆盖旧值
                 options[key] = value;
             }
         }
@@ -73,6 +74,40 @@ export function parseMinWidth(minWidth) {
         }
     }
     return minWidth;
+}
+
+/**
+ * 数字化处理高度
+ * @param {Number/String} height 
+ * 正则知识补充:
+ * (?:) 非捕获括号 参考:https://segmentfault.com/q/1010000010302799
+ * 比较(X)和(?:X)，前者是捕获分组，后者不捕获，区别在于正则表达式匹配输入字符串之后所获得的匹配的（数）组当中没有(?:X)匹配的部分
+ * +: 前面字符出现一次或更多次
+ * ?: 前面字符出现零次或一次
+ * \d: 数字字符
+ */
+export function parseHeight(height) {
+    // number 类型
+    if(typeof height === 'number') {
+        return height;
+    }
+
+    // string类型
+    if(typeof height === 'string') {
+        // 150px /^\d+(?:px)?$/
+        const reg = /^\d+(?:px)?$/;
+        console.log('正则匹配', height, reg.test(height))
+
+        if(reg.test(height)) {
+            // parseInt可将带有px的也给过滤掉
+            return parseInt(height, 10);
+        } else {
+            return height;
+        }
+    }
+
+    // 其他类型
+    return null;
 }
 
 /**
