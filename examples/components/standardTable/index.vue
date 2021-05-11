@@ -1,11 +1,17 @@
 <template>
     <y-table
-        :data="data">
+        :data="data"
+        :border="border"
+        :align="align"
+        :height="height"
+        :maxHeight="maxHeight">
         <template v-for="(column, index) in columns">
             <y-table-column
                 :key="index"
                 :prop="column.prop || null"
-                :label="column.label || null">
+                :label="column.label || null"
+                :align="column.align || null"
+                :width="column.width || null">
                 <template slot-scope="scope">
                     <template v-if="column.slots">
                         <slot :name="column.slots" :row="scope.row"></slot>
@@ -44,6 +50,25 @@ export default {
                 return [];
             }
         },
+
+        // 是否有边框,默认是false
+        border: {
+            type: Boolean,
+            default: false,
+        },
+
+        // 文本对齐方式
+        align: String,
+
+        // 表格高度
+        height: [Number, String],
+
+        // 表格最大高度
+        maxHeight: [Number, String],
+    },
+
+    mounted() {
+        console.log('hhhg', this.align)
     }
 }
 </script>

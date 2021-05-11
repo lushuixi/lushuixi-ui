@@ -23,9 +23,12 @@
         </y-table> -->
 
         <!-- 二次封装 -->
-        <!-- <StandardTable
+        <StandardTable
             :columns="columns"
-            :data="tableData"/> -->
+            :data="tableData"
+            border
+            align="center"
+            max-height="360px"/>
 
         <y-table 
             :data="tableData"
@@ -148,6 +151,7 @@ export default {
                 {
                     prop: 'name',
                     label: '姓名',
+                    width: 180,
                 },{
                     prop: 'alias',
                     label: '别名',

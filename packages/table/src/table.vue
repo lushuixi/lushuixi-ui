@@ -371,14 +371,3 @@ export default {
 
 }
 </script>
-
-<style>
-.y-table,
-.y-table__body-wrapper {
-    overflow: hidden;
-    box-sizing: border-box;
-}
-.y-table__scrollable-y .y-table__body-wrapper {
-    overflow-y: auto;
-}
-</style>

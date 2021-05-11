@@ -1,5 +1,4 @@
 .y-table {
-    box-sizing: border-box;
     position: relative;
     width: 100%;
     padding: 0;
@@ -19,6 +18,11 @@
     position: absolute;
     visibility: hidden;
     z-index: -1;
+}
+.y-table,
+.y-table__body-wrapper {
+    overflow: hidden;
+    box-sizing: border-box;
 }
 .y-table .y-table__header,
 .y-table .y-table__body {
@@ -79,4 +83,8 @@
 /* 表格文本对齐方式 */
 .y-table__center .cell {
     text-align: center;
+}
+/* 纵向滚动 */
+.y-table__scrollable-y .y-table__body-wrapper {
+    overflow-y: auto;
 }
