@@ -76,3 +76,7 @@
 .y-table__border th {
     border-right: 1px solid #ebeef5;
 }
+/* 表格文本对齐方式 */
+.y-table__center .cell {
+    text-align: center;
+}

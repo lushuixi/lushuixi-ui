@@ -123,6 +123,8 @@ export default {
         // 列宽
         width: {},
         minWidth: {},
+        // 文本对齐方式
+        align: String,
     },
 
     data() {
@@ -229,13 +231,15 @@ export default {
                 if(this.$scopedSlots.default) {
                     // vm.$scopedSlots 范文作用域插槽, 并传入数据
                     children = this.$scopedSlots.default(data);
-                }else {
+                } else {
                     children = originRenderCell(h, data);
                 }
 
                 const props = {
                     class: 'cell',
-                    style: {},
+                    style: [
+                        column.align ? {'text-align': column.align} : '',
+                    ],
                 };
 
                 return (
@@ -309,7 +313,7 @@ export default {
 
         // 基础属性
         // const basicProps = ['label', 'prop',];
-        const basicProps = ['label',];
+        const basicProps = ['label', 'align', ];
         
         // 收集column属性
         let column = this.getPropsData(basicProps);

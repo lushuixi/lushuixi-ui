@@ -29,19 +29,22 @@
 
         <y-table 
             :data="tableData"
-            border>
-            <y-table-column prop="name" label="姓名"></y-table-column>
-            <y-table-column label="介绍">
-                <y-table-column label="个人信息">
+            border
+            align="center">
+            <y-table-column prop="name" label="姓名" align="center"></y-table-column>
+            <y-table-column label="介绍" align="center">
+                <y-table-column label="个人信息" align="center">
                     <y-table-column prop="position" label="职位"></y-table-column>
                     <y-table-column prop="sex" label="性别"></y-table-column>
                     <y-table-column prop="home" label="家乡"></y-table-column>
                 </y-table-column>
-                <y-table-column label="个人喜好">
+                <y-table-column label="个人喜好" align="center">
                     <y-table-column prop="likes" label="爱好"></y-table-column>
                     <y-table-column prop="value" label="悬赏金"></y-table-column>
                 </y-table-column>
+                <y-table-column prop="birth" label="生日" align="center"></y-table-column>
             </y-table-column>
+            <y-table-column prop="alias" label="别名"></y-table-column>
         </y-table>
 
         <!-- <table border>

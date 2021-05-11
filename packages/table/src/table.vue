@@ -13,9 +13,10 @@
         给table-column添加width属性
     -->
     <div class="y-table"
-        :class="[{
-            'y-table__border': border
-        }]">
+        :class="[
+            {'y-table__border': border},
+            align ? 'y-table__' + align : '',
+        ]">
         <!-- 原生-子节点-列的渲染 -->
         <div class="hidden-columns" ref="hiddenColumns">
             <slot></slot>
@@ -127,6 +128,9 @@ export default {
             type: String,
             default: '暂无数据',
         },
+
+        // 文本对齐方式
+        align: String,
 
     },
 

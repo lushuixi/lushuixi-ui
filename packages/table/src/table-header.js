@@ -149,6 +149,9 @@ export default {
     //     },
     // },
 
+    methods: {
+    },
+
     // created() {
         // console.log('created-header', this);
     // },
@@ -211,15 +214,20 @@ export default {
                                 <tr
                                     key={rowIndex}>
                                     {
-                                        columns.map((column, cellIndex) => (<th
+                                        columns.map((column, cellIndex) => {
+                                            const style = [
+                                                column.align ? {'text-align': column.align,} : '',
+                                            ];
+                                            return (<th
                                             colspan={column.colspan}
                                             rowspan={column.rowspan}
                                             key={column.id}>
                                             <div
-                                                class="cell">
+                                                class="cell"
+                                                style={style}>
                                                 {column.label}
                                             </div>
-                                        </th>))
+                                        </th>)})
                                     }
                                 </tr>)
                         }
