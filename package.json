@@ -95,6 +95,7 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
+    "element-ui": "^2.15.1",
     "resize-observer-polyfill": "^1.5.1",
     "throttle-debounce": "^3.0.1"
   }

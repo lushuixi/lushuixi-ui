@@ -6,6 +6,7 @@ import Checkbox from '../packages/checkbox/index.js';
 import CheckboxGroup from '../packages/checkbox-group/index.js';
 import Table from '../packages/table/index.js';
 import TableColumn from '../packages/table-column/index.js';
+import Tree from '../packages/tree/index.js';
 
 const components = [
     Button,
@@ -15,6 +16,7 @@ const components = [
     CheckboxGroup,
     Table,
     TableColumn,
+    Tree,
 ]
 
 // 全局注册组件
@@ -34,4 +36,5 @@ export default {
     CheckboxGroup,
     Table,
     TableColumn,
+    Tree,
 }

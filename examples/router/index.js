@@ -12,6 +12,10 @@ export default  new  VueRouter({
         {
             path: '/index',
             component: Index,
+        },
+        {
+            path: '/table',
+            component: () => import('../views/table'),
         }
     ]
 })
