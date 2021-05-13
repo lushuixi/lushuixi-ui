@@ -11,6 +11,29 @@
         tree-node.vue 树组件的节点的渲染
         model/tree-store.js 树节点的容器(侧重于处理) -> 实例化根节点: this.root = new Node({...}), 构建根节点的子树
         model/node.js 节点类 -> 生成节点的childNodes, 从而构建该节点的子树
+
+        支持多选框的显示
+        showCheckbox是否显示多选框,通过prop传递给子节点(一层一层的传递下去)
+        tree-node.vue内容展示区增加多选框checkbox,增加v-if判断是否展示
+
+        支持子树的点击展开和伸缩
+        tree.vue:defaultExpandAll是否默认展开子树,默认为false,不展示子树
+        tree-node.vue:对树节点node增加expand和collapse方法以设置node.expand为true或false
+        tree-node.vue::对子树增加v-if(是否存在)和v-show(第一次加载后若收缩则隐藏而不是从dom中删除)
+        tree-node.vue:增加响应式属性childNodeRendered和expanded,增加监听node.expand的变化以更新子树的收缩和展开
+
+        支持自定义节点的显示内容 ------------------------------
+        视图页面:<y-tree :data="data"><div slot-scope="scope"></div></y-tree>
+        tree.vue渲染子树是通过tree-node.vue,所以需要将tree.vue的默认插槽传入到tree-node.vue
+        [转变]:不一定要通过tree.vue显性传递tree.vue默认插槽给tree-node.vue
+            - 在tree-node.vue中可以通过父组件的treeC来获取
+        
+        补充插槽知识:
+        废弃了的用法:https://cn.vuejs.org/v2/guide/components-slots.html#%E5%BA%9F%E5%BC%83%E4%BA%86%E7%9A%84%E8%AF%AD%E6%B3%95
+        - 带有slot属性的具名插槽 -> 通过this.$slots获取
+        - 带有slot-scope属性的作用域插槽 -> 通过this.$scopedSlots获取
+        新推荐的用法:v-slot
+
      -->
     <div
         class="y-tree">
@@ -132,7 +155,9 @@ export default {
     },
 
     mounted() {
-        console.log('tree', this.root, this.showCheckbox);
+        // console.log('tree', this.root, this.showCheckbox);
+
+        console.log('tree', this, this.$slots);
     }
 }
 </script>

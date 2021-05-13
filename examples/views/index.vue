@@ -30,15 +30,43 @@
 
                     行内部的权限checkobx选中状态变化后回调函数change事件 -> 
          -->
-        <y-tree 
+        <!-- 树节点案例一 -->
+        <!-- <y-tree 
             :data="data"
             :show-checkbox="false"
             :default-expand-all="false"
-            node-key="id" />
-
-        <!-- <el-tree
-            :data="data"
             node-key="id" /> -->
+
+        <!-- 树节点案例二:支持自定义节点显示内容 -->
+        <y-tree
+            :data="dataCustom"
+            node-key="id"
+        >
+            <div 
+                class="tree-row"
+                slot-scope="{node,data}"
+            >
+                <div class="tree-row-name">
+                    {{data.label}} -- 
+                    {{node.label}}
+                </div>
+                <div class="tree-row-operate">
+                    <y-checkbox-group 
+                        v-model="data.operates" 
+                        @click.native.stop
+                    >
+                        <y-checkbox
+                            v-for="(item, index) in data.menuOperates"
+                            :value="item.id"
+                            :key="index+item.id"
+                        >
+                            {{item.name}}
+                        </y-checkbox>
+                    </y-checkbox-group>
+                </div>
+            </div>
+        </y-tree>
+        
     </div>
 </template>
 
@@ -72,11 +100,126 @@ export default {
                 }
             ];
             return res;
+        },
+        dataCustom() {
+            let res = [];
+            res = [
+                {
+                    label: '一级 1',
+                    operates: [],
+                    menuOperates: [{
+                        id:1,
+                        name:'查看'
+                    },{
+                        id:2,
+                        name:'新增'
+                    },{
+                        id:3,
+                        name:'编辑'
+                    }],
+                    children: [{
+                        label: '二级 1-1',
+                        operates: [],
+                        menuOperates: [{
+                            id:1,
+                            name:'查看'
+                        },{
+                            id:2,
+                            name:'新增'
+                        },{
+                            id:3,
+                            name:'编辑'
+                        }],
+                        children: [{
+                            label: '三级 1-1-1',
+                            operates: [],
+                            menuOperates: [{
+                                id:1,
+                                name:'查看'
+                            },{
+                                id:2,
+                                name:'新增'
+                            },{
+                                id:3,
+                                name:'编辑'
+                            }],
+                            children: [{
+                                label: '四级 1-1-1-1',
+                                operates: [],
+                                menuOperates: [{
+                                    id:1,
+                                    name:'查看'
+                                },{
+                                    id:2,
+                                    name:'新增'
+                                },{
+                                    id:3,
+                                    name:'编辑'
+                                }],
+                            }]
+                        }]
+                    }]
+                },{
+                    label: '一级 2',
+                    operates: [],
+                    menuOperates: [{
+                        id:1,
+                        name:'查看'
+                    },{
+                        id:2,
+                        name:'新增'
+                    },{
+                        id:3,
+                        name:'编辑'
+                    }],
+                    children: [{
+                        label: '二级 2-1',
+                        operates: [],
+                        menuOperates: [{
+                            id:1,
+                            name:'查看'
+                        },{
+                            id:2,
+                            name:'新增'
+                        },{
+                            id:3,
+                            name:'编辑'
+                        }],
+                        children: [{
+                            label: '三级 2-1-1',
+                            operates: [],
+                            menuOperates: [{
+                                id:1,
+                                name:'查看'
+                            },{
+                                id:2,
+                                name:'新增'
+                            },{
+                                id:3,
+                                name:'编辑'
+                            }],
+                        }]
+                    }]
+                },{
+                    label: '三级 2',
+                    operates: [],
+                    menuOperates: [{
+                        id:1,
+                        name:'查看'
+                    },{
+                        id:2,
+                        name:'新增'
+                    },{
+                        id:3,
+                        name:'编辑'
+                    }],
+                }
+            ];
+            return res;
         }
     },
     data() {
         return {
-            checkobxValue: false,
         }
     },
     mounted() {
@@ -92,3 +235,17 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.tree-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+.tree-row-name {
+    flex: 1;
+}
+.tree-row-operate {
+    flex: 1;
+}
+</style>

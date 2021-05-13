@@ -66,7 +66,7 @@ export default {
                 }else {
                     // 保留父组件checkbox-group的数据
                     this._checkboxGroup = parent;
-                    console.log('_checkboxGroup', this._checkboxGroup);
+                    // console.log('_checkboxGroup', this._checkboxGroup);
                     return true;
                 }
             }

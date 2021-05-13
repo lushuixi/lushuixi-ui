@@ -64,7 +64,10 @@
             2.渲染该节点的子树
          -->
          <y-collapse-transition>
-             <!-- v-if="node.expanded && node.childNodes.length" -->
+             <!-- v-if="node.expanded && node.childNodes.length"
+                v-if:动态的控制DOM元素的添加和删除
+                v-show:只是同来css的display来控制元素的显示和隐藏
+              -->
             <div
                 v-if="childNodeRendered"
                 v-show="expanded"
@@ -123,9 +126,12 @@ export default {
                 // [[Target]]: VueComponent
                 // [[IsRevoked]]: false
                 
-                // console.log('88', this, node)
+                console.log('88', this, node, typeof node);
+                // 增加自定义节点显示内容(插槽)
                 return (
-                    <span class="y-tree-node__label">{node.label}</span>
+                    treeC.$scopedSlots.default 
+                        ? treeC.$scopedSlots.default({node, data})
+                        : <span class="y-tree-node__label">{node.label}</span>
                 )
             }
         }
