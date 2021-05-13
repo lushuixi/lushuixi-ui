@@ -1,7 +1,7 @@
-import LCheckbox from './src/checkbox';
+import YCheckbox from './src/checkbox';
 
-LCheckbox.install = function (Vue) {
-    Vue.component(LCheckbox.name, LCheckbox);
+YCheckbox.install = function (Vue) {
+    Vue.component(YCheckbox.name, YCheckbox);
 };
 
-export default LCheckbox;
+export default YCheckbox;

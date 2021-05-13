@@ -1,7 +1,7 @@
-import LCheckboxGroup from '../checkbox/src/checkbox-group';
+import YCheckboxGroup from '../checkbox/src/checkbox-group';
 
-LCheckboxGroup.install = function (Vue) {
-    Vue.component(LCheckboxGroup.name, LCheckboxGroup);
+YCheckboxGroup.install = function (Vue) {
+    Vue.component(YCheckboxGroup.name, YCheckboxGroup);
 };
 
-export default LCheckboxGroup;
+export default YCheckboxGroup;

@@ -87,7 +87,14 @@ export default class Node {
             throw new Error('[Node]store is required!');
         }
 
+        // 构建子树
         this.setData(this.data);
+
+        // 设置节点的展开属性
+        // console.log('store', this.store.defaultExpandAll);
+        if(store.defaultExpandAll) {
+            this.expanded = true;
+        }
 
         // 节点注册,为什么会在tree-store中呢?为什么要注册?
         // store.registerNode(this);
@@ -174,5 +181,28 @@ export default class Node {
             // console.log(index, index === undefined)
             this.childNodes.splice(index, 0, child)
         }
+    }
+
+    /**
+     * 子树收缩
+     * 设置展开属性
+     * node.expanded = false
+     */
+    collapse() {
+        this.expanded = false;
+        // console.log('collapse', this, this.expanded);
+    }
+
+    /**
+     * 展开子树
+     * 设置节点的展开属性
+     * node.expanded = true
+     * 
+     * 注意:树上的每个节点都具有展开和伸缩子树的方法,而不是将这两个方法共享
+     * 保证了树节点的独立性
+     */
+    expand() {
+        // console.log('展开子树', this);
+        this.expanded = true;
     }
 }

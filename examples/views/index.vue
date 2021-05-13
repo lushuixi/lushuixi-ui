@@ -32,6 +32,8 @@
          -->
         <y-tree 
             :data="data"
+            :show-checkbox="false"
+            :default-expand-all="false"
             node-key="id" />
 
         <!-- <el-tree
@@ -74,6 +76,7 @@ export default {
     },
     data() {
         return {
+            checkobxValue: false,
         }
     },
     mounted() {

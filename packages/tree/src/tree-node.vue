@@ -1,14 +1,55 @@
 <template>
-    <!-- 如何渲染子树?
+    <!-- 如何渲染子树?循环嵌套
+
+        v-on事件修饰符
+        官方文档:https://cn.vuejs.org/v2/guide/events.html
+        参考:https://www.cnblogs.com/xiaoyaoxingchen/p/10405207.html
+
+        .stop:阻止单击事件继续传播(阻止事件冒泡,阻止事件向上级DOM元素传递)
+        .prevent:提交事件不再重载页面(form表单提交,阻止默认事件的发生)
+        .capture:添加事件监听器时使用事件捕获模式(捕获冒泡，即有冒泡发生时，有该修饰符的dom元素会先执行，如果有多个，从外到内依次执行，然后再按自然顺序执行触发的事件)
+        .self:当前元素自身触发处理函数(将事件绑定到自身，只有自身才能触发，通常用于避免冒泡事件的影响)
+        .once:设置事件只能触发一次，比如按钮的点击等
+        .passive
+        .native:在父组件中给子组件绑定一个原生的事件，就将子组件变成了普通的HTML标签，不加'. native'事件是无法触 发的
+
+        修饰符也可以串联
+        .stop.prevent
+
+        只有修饰符
+        @click.native.stop:阻止子组件点击事件冒泡
+        checkbox多选框是需要点击选中或不选中的,该事件是原生的点击事件
+        那么在父组件树节点组件中,点击是展开或伸缩子树的
+        如果不做处理,则点击checkbox多选框,原生的点击事件会向上冒泡,从而使父组件也跟着触发点击事件
+        所以需要阻止该子组件的原生点击事件冒泡,于是加上@click.native.stop
+
+        @click.stop:阻止向上冒泡,在该级展开子树
      -->
     <div
-        class="y-tree-node">
+        class="y-tree-node"
+        :aria-expanded="expanded"
+        @click.stop="handleClick"
+    >
         <!-- 节点内容的展示,主要分四部分(展开图标展示,多选框,加载中图标,节点内容展示)
-            动态计算偏移量:(node.level - 1) * treeC.indent + 'px' -->
+            动态计算偏移量:(node.level - 1) * treeC.indent + 'px' 
+            1.渲染树节点
+
+            点击节点行展开或取消展开子树
+            node.expanded:true展开|false不展开
+        -->
         <div
             class="y-tree-node__content"
-            :style="{'padding-left': (node.level - 1) * treeC.indent + 'px'}">
+            :style="{'padding-left': (node.level - 1) * treeC.indent + 'px'}"
+        >
             <!-- 这里分四部分 -->
+            <!-- 多选框 -->
+            <y-checkbox
+                v-if="showCheckbox"
+                v-model="node.checked"
+                @click.native.stop
+            >
+            </y-checkbox>
+            <!-- 内容 -->
             <node-content :node="node"></node-content>
         </div>
         <!-- 子组件如何渲染?
@@ -19,15 +60,22 @@
             实际上:循环嵌套式一个环,往下走完还要往回走
 
             如果没有子节点(node.childNodes.length为0)则不展示
+
+            2.渲染该节点的子树
          -->
          <y-collapse-transition>
+             <!-- v-if="node.expanded && node.childNodes.length" -->
             <div
-                v-if="node.childNodes.length"
-                class="y-tree-node__children">
+                v-if="childNodeRendered"
+                v-show="expanded"
+                class="y-tree-node__children"
+                :aria-expanded="expanded"
+            >
                 <y-tree-node
                     v-for="(child) in node.childNodes"
                     :key="getNodeKey(child)"
                     :node="child"
+                    :show-checkbox="showCheckbox"
                 >
                 </y-tree-node>
             </div>
@@ -44,34 +92,6 @@ export default {
     name: 'YTreeNode',
     componentName: 'YTreeNode',
 
-    props: {
-        /**
-         * 两种写法
-         */
-        // node: {
-        //     type: Object,
-        //     default: function() {
-        //         return {};
-        //     }
-        // },
-        node: {
-            default() {
-                return {};
-            }
-        }
-    },
-
-    data() {
-        return {
-            /**
-             * 表示父组件是否是树根,如果是则表示父组件,如果不是则表示父组件的tree
-             * tree :null,
-             * 树上所有节点共享的属性和方法(通过treeC一级一级的传递下去)
-             */
-            treeC: null,
-        }
-    },
-    
     // 组件注册
     components: {
         YCollapseTransition,
@@ -103,7 +123,7 @@ export default {
                 // [[Target]]: VueComponent
                 // [[IsRevoked]]: false
                 
-                console.log('88', this, node)
+                // console.log('88', this, node)
                 return (
                     <span class="y-tree-node__label">{node.label}</span>
                 )
@@ -111,10 +131,102 @@ export default {
         }
     },
 
+    props: {
+        /**
+         * 两种写法
+         */
+        // node: {
+        //     type: Object,
+        //     default: function() {
+        //         return {};
+        //     }
+        // },
+        node: {
+            default() {
+                return {};
+            }
+        },
+
+        showCheckbox: {
+            type: Boolean,
+            default: false,
+        },
+    },
+
+    data() {
+        return {
+            /**
+             * 表示父组件是否是树根,如果是则表示父组件,如果不是则表示父组件的tree
+             * tree :null,
+             * 树上所有节点共享的属性和方法(通过treeC一级一级的传递下去)
+             */
+            treeC: null,
+
+            // 该节点是否展开,作用是html需要
+            expanded: false,
+            
+            /**
+             * 子树是否渲染(是否展开子树)
+             * 表示子树是否已经被渲染过了
+             * 如果被渲染过了
+             * - expanded为true则隐藏子树(display:none)
+             * - expanded为false则显示子树(display:block)
+             */
+            childNodeRendered: false,
+        }
+    },
+
+    /**
+     * 监听属性,
+     * 不仅可以监听属性自己,还可监听对象
+     * 监听对象(深度监听对象的属性|监听该对象指定属性)
+     * 
+     */
+    watch: {
+        /**
+         * 监听node.expanded的更新
+         * 如果原节点的expand是false
+         * 点击节点行 -> hangleClick -> 调用node.expand -> node.expand为true -> 可以监听到该值的变化
+         * 再次点击节点行 -> handleClick -> 
+         */
+        'node.expanded'(val) {
+            // console.log('监听node.expanded', val);
+
+            // 等视图更新后再去调用,否则可能会出现只监听到一次,便不打印值了
+            this.$nextTick(() => this.expanded = val);
+            if(val) {
+                this.childNodeRendered = true;
+            }
+            // console.log('监听node.expanded', this);
+        },
+    },
+
     methods: {
+
+        /**
+         * 获取节点的key
+         */
         getNodeKey(node) {
             // console.log('treeC', this.treeC)
             return getNodeKey(this.treeC.nodeKey, node.data)
+        },
+
+        /**
+         * 点击展开|收缩
+         */
+        handleClick() {
+            // console.log('点击了', this.expanded);
+            // this.handleExpandIconClick();
+
+            if(this.expanded) {
+                // 如果已经展开了,则收缩
+                this.node.collapse();
+            } else {
+                // 如果没有展开,则展开
+                this.node.expand();
+            }
+
+            // console.log('ending');
         },
     },
 
@@ -134,17 +246,32 @@ export default {
 
         const parent = this.$parent;
         this.treeC = parent.isTree ? parent : parent.treeC;
-        console.log('tree-node', this.node, this.node.childNodes);
+        // console.log('tree-node', this.node, this.node.childNodes);
     
         const treeC = this.treeC;
         if(!treeC) {
             console.warn('Can not find node\'s tree.');
         }
         // console.log('created', tree, tree.indent, this.node.level, tree.indent * (this.node.level-1))
+
+        /**
+         * created:this.$data是空对象,则在created中赋值的变量在虚拟节点的根部
+         * 但是如果赋值的变量也在data中,则也回保存到data中
+         * 组件下的data是响应式的数据(更新视图)
+         * 因为expanded和childNodeRendered需要是响应式的,所以需要在data中定义
+         * 否则非响应式的数据便不需要保存到data中
+         */
+        if(this.node.expanded) {
+            this.expanded = true;
+            this.childNodeRendered = true;
+        }
+
+        // console.log('88', this.node.expanded);
+    
     },
 
     mounted() {
-        // console.log('node', this.node)
+        // console.log('node', this.node, this.showCheckbox, this.treeC.showCheckbox)
     }
 }
 </script>

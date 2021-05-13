@@ -46,7 +46,7 @@ export default {
     functional: true,
 
     render(h, context) {
-        console.log('context', context);
+        // console.log('context', context);
         const {children} = context;
         return h(
             'transition',  // 标签名

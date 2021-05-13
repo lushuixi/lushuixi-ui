@@ -6,25 +6,25 @@
         半选中状态下，如果再次点击，将indeterminate置为false, 便可以选中和取消选中了
         但是只能在父组件中控制indeterminate的值（因为子组件不能更改父组件prop传进来的值） -->
     <label
-        class="l-checkbox"
+        class="y-checkbox"
         role="checkbox">
         <!-- checkbox分两部分, 一部分是多选框，一部分是标签 -->
         <span
-            class="l-checkbox__input"
+            class="y-checkbox__input"
             :class="{
                 'is-checked': isChecked,
                 'is-indeterminate': indeterminate,
             }"
             >
-            <!-- l-checkbox__inner 替换了原生多选框的样式，原生多选框只有两种状态，通过自定义的样式可定义第三种半选状态-->
-            <span class="l-checkbox__inner"></span>
+            <!-- y-checkbox__inner 替换了原生多选框的样式，原生多选框只有两种状态，通过自定义的样式可定义第三种半选状态-->
+            <span class="y-checkbox__inner"></span>
             <!-- 原生多选框, 如果value和labl都没有传, 则选中状态变化后, model值为true或false 
                 定义ref以便获取该dom元素从而通知该原生多选框的选中状态
                 自定义属性 aria-hidden 可直观明白该html是否展示
             -->
             <input
                 ref="checkbox"
-                class="l-checkbox__original"
+                class="y-checkbox__original"
                 type="checkbox"
                 :value="label"
                 aria-hidden="false"
@@ -33,9 +33,9 @@
         </span>
         <!-- 标签, 如果子元素存在则展示子元素, 否则标签为label -->
         <span 
-            class="l-checkbox__label">
+            class="y-checkbox__label">
             <slot></slot>
-            <templat v-if="!$slots.default">{{label}}</templat>
+            <template v-if="!$slots.default">{{label}}</template>
         </span>
     </label>
 </template>
@@ -43,7 +43,7 @@
 <script>
 import Emitter from '../../../src/mixins/emitter';
 export default {
-    name: 'LCheckbox',
+    name: 'YCheckbox',
     props: {
         value: {},
         // label选中状态的值, 只有在checkbox-group或者value为数组类型的时候方可有效
@@ -61,7 +61,7 @@ export default {
             let parent = this.$parent;
             // 查找父节点, 判断是否是checkbox-group
             while (parent) {
-                if(parent.$options.componentName !== 'LCheckboxGroup') {
+                if(parent.$options.componentName !== 'YCheckboxGroup') {
                     parent = parent.$parent;
                 }else {
                     // 保留父组件checkbox-group的数据
@@ -88,8 +88,8 @@ export default {
                 if(this.isGroup) {
                     // console.log('通知父组件更新数据', val, this.model);
                     // 由于父组件的value是数组类型, 则更新即删除和添加，如何做到的呢？
-                    console.log('model发生了变化', val, this.label);
-                    this.dispatch('LCheckboxGroup', 'input', [val]);
+                    // console.log('model发生了变化', val, this.label);
+                    this.dispatch('YCheckboxGroup', 'input', [val]);
                 }else {
                     this.$emit('input', val);
                 }
@@ -110,7 +110,7 @@ export default {
             
             // 如果是第一种情况, 单独使用多选框且value值为布尔类型
             if({}.toString.call(this.model) === '[object Boolean]') {
-                console.log('hhhh', this.model);
+                // console.log('hhhh', this.model);
                 return this.model;
             }
 
@@ -140,7 +140,7 @@ export default {
                 this.$emit('change', this.model, this._checkboxGroup);
                 if(this.isGroup) {
                     // 组件checkbox-group绑定的change事件
-                    this.dispatch('LCheckboxGroup', 'change', [this._checkboxGroup.value]);
+                    this.dispatch('YCheckboxGroup', 'change', [this._checkboxGroup.value]);
                 }
             })
         },
@@ -152,12 +152,12 @@ export default {
         // if(this.indeterminate) {
         //     this.$el.setAttribute('aria-controls', this.controls);
         // }
-        console.log('isChecked', this.isChecked);
+        // console.log('isChecked', this.isChecked);
     },
     watch: {
-        isChecked() {
-            console.log('watchisChecked', this.isChecked)
-        }
+        // isChecked() {
+        //     console.log('watchisChecked', this.isChecked)
+        // }
     }
 }
 </script>

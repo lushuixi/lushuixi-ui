@@ -18,7 +18,9 @@
         <y-tree-node
             v-for="(child) in root.childNodes"
             :node="child"
-            :key="getNodeKey(child)">
+            :show-checkbox="showCheckbox"
+            :key="getNodeKey(child)"
+        >
         </y-tree-node>
     </div>
 </template>
@@ -50,6 +52,26 @@ export default {
         nodeKey: String,
 
         /**
+         * 节点是否可被选择
+         * 树节点共享该值 show-checkbox
+         */
+        showCheckbox: {
+            type: Boolean,
+            default: false,
+        },
+
+        /**
+         * 是否默认展开所有节点
+         * 默认值false
+         * 树节点共享值 default-expand-all
+         * 存到store
+         */
+        defaultExpandAll: {
+            type: Boolean,
+            default: false,
+        },
+
+        /**
          * 配置项
          */
         props: {
@@ -68,7 +90,7 @@ export default {
         indent: {
             type: Number,
             default: 18,
-        }
+        },
 
     },
 
@@ -101,6 +123,8 @@ export default {
             key: this.nodeKey,
             data: this.data,
             props: this.props,
+            // showCheckbox: this.showCheckbox,
+            defaultExpandAll: this.defaultExpandAll,
         });
 
         // 树的根节点
@@ -108,7 +132,7 @@ export default {
     },
 
     mounted() {
-        console.log('tree', this.root);
+        console.log('tree', this.root, this.showCheckbox);
     }
 }
 </script>

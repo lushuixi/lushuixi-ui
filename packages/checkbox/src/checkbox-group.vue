@@ -6,7 +6,7 @@
         子组件checkbox值发生变化后, 如何通知父组件checkbox-group更新value值？
     -->
     <div 
-        class="l-checkbox-group"
+        class="ycheckbox-group"
         role="checkboxgroup">
         <!-- 替children占位 -->
         <slot></slot>
@@ -16,8 +16,8 @@
 <script>
 
 export default {
-    name: 'LCheckboxGroup',
-    componentName: 'LCheckboxGroup',
+    name: 'YCheckboxGroup',
+    componentName: 'YCheckboxGroup',
     props: {
         value: {},
     }
