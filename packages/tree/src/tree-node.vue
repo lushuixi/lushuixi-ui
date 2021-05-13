@@ -113,7 +113,7 @@ export default {
 
     methods: {
         getNodeKey(node) {
-            console.log('treeC', this.treeC)
+            // console.log('treeC', this.treeC)
             return getNodeKey(this.treeC.nodeKey, node.data)
         },
     },
