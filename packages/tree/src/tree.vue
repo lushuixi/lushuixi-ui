@@ -60,6 +60,14 @@ export default {
                     label: 'label', // 指定节点标签为节点对象的某个属性的值
                 }
             }
+        },
+
+        /**
+         * 相邻级节点间的水平缩进
+         */
+        indent: {
+            type: Number,
+            default: 18,
         }
 
     },
@@ -85,6 +93,9 @@ export default {
     },
 
     created() {
+        // 给子树判断父组件是否为树
+        this.isTree = true;
+
         // 创建树的store
         this.store = new TreeStore({
             key: this.nodeKey,

@@ -77,7 +77,7 @@ export default class Node {
         // 该节点的子节点
         this.childNodes = [];
 
-        // 计算层级
+        // 计算层级 根节点层级为0
         if(this.parent) {
             this.level = this.parent.level + 1;
         }
@@ -93,6 +93,13 @@ export default class Node {
         // store.registerNode(this);
 
         // console.log('Node', this, options);
+    }
+
+    /**
+     * 通过 node.label 调用(即执行get方法)
+     */
+    get label() {
+        return getPropertyFromData(this, 'label');
     }
 
     /**
