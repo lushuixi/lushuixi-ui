@@ -4,6 +4,20 @@
         方法: change事件,双向绑定的值value发生变化后的回调
         如何将checkbox-group的值传递给checkbox子组件？-- 子组件通过向上追溯找到父组件checkbxo-group
         子组件checkbox值发生变化后, 如何通知父组件checkbox-group更新value值？
+        使用方式:
+        <y-checkbox-group 
+            v-model="data.operates" 
+            @click.native.stop
+            @change="handleCheckboxGroupChange(data.operates)"
+            >
+            <y-checkbox
+                v-for="(item, index) in data.menuOperates"
+                :label="item.id"
+                :key="index+item.id"
+            >
+                {{item.name}}
+            </y-checkbox>
+        </y-checkbox-group>
     -->
     <div 
         class="ycheckbox-group"
@@ -20,6 +34,6 @@ export default {
     componentName: 'YCheckboxGroup',
     props: {
         value: {},
-    }
+    },
 }
 </script>

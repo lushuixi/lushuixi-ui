@@ -54,10 +54,11 @@
                     <y-checkbox-group 
                         v-model="data.operates" 
                         @click.native.stop
+                        @change="handleCheckboxGroupChange(data.operates)"
                     >
                         <y-checkbox
                             v-for="(item, index) in data.menuOperates"
-                            :value="item.id"
+                            :label="item.id"
                             :key="index+item.id"
                         >
                             {{item.name}}
@@ -220,6 +221,11 @@ export default {
     },
     data() {
         return {
+        }
+    },
+    methods: {
+        handleCheckboxGroupChange(operates) {
+            console.log('handleCheckboxGroupChange', operates)
         }
     },
     mounted() {

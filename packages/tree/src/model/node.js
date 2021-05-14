@@ -199,7 +199,7 @@ export default class Node {
      * node.expanded = true
      * 
      * 注意:树上的每个节点都具有展开和伸缩子树的方法,而不是将这两个方法共享
-     * 保证了树节点的独立性
+     * 保证了树节点的独立性质
      */
     expand() {
         // console.log('展开子树', this);
