@@ -50,7 +50,7 @@
                 v-model="node.checked"
                 :indeterminate="node.indeterminate"
                 @click.native.stop
-                @change="handleCheckChange"
+                @change="handleNodeUpdateChange"
             >
             </y-checkbox>
             <!-- 内容 -->
@@ -132,7 +132,7 @@ export default {
                 // [[Target]]: VueComponent
                 // [[IsRevoked]]: false
                 
-                // console.log('88', this, node, typeof node);
+                console.log('88', this, node, typeof node);
                 // 增加自定义节点显示内容(插槽)
                 return (
                     treeC.$scopedSlots.default 
@@ -243,14 +243,126 @@ export default {
 
         /**
          * 更改节点的选中状态
+         * 取消选中 | 选中 | 半选中
          */
-        handleCheckChange(value, ev) {
-            console.log('handleCheckChange', value, ev);
-            // 设置节点自身的选中状态
-            // setChecked (key/data, checked, deep) 
-            // 通过 key / data 设置某个节点的勾选状态，使用此方法必须设置 node-key 属性
-            this.node.setChecked(ev.target.checked, !this.treeC.checkStrictly);
-        }
+        notifyNodeUpdate(node, type) {
+            // console.log('通知节点更改选中状态:取消选中|选中|半选中', node);
+            switch(type) {
+                case 'checked': 
+                    // console.log('checkedcheckedchecked');
+                    node.checked = true;
+                    node.indeterminate = false;
+                    break;
+                case 'indeterminate':
+                    node.checked = false;
+                    node.indeterminate = true;
+                    break;
+                default: 
+                    node.checked = false;
+                    node.indeterminate = false;
+                    break;
+            }
+        },
+
+        /**
+         * 统计节点的选中状态的个数
+         * 选中状态: checked:true,cancel:false,indeterminate:false
+         * 取消选中: checked:false,cancel:true,indeterminate:false
+         * 半选中:   checked:false,cancel:false,indeterminate:true
+         */
+        countNodeStatus(childNodes) {
+            let res = {
+                checked: 0,
+                cancel: 0,
+                indeterminate: 0,
+            };
+            // console.log('统计节点的选中状态个数', childNodes);
+            childNodes.forEach(node => {
+                if(node.checked) res.checked++;
+                if(node.indeterminate) res.indeterminate++;
+                if(!node.checked && !node.indeterminate) res.cancel++;
+            });
+            return res;
+        },
+
+        /**
+         * 判断父节点的选中状态
+         */
+        judgeParentNodeStatus(childNodes) {
+            let childNodesStatus = this.countNodeStatus(childNodes);
+            // console.log('统计子节点的选中状态', childNodes, childNodesStatus)
+            if(childNodesStatus.checked === childNodes.length) {
+                return 'checked';
+            }
+            if(childNodesStatus.cancel === childNodes.length) {
+                return 'cancel';
+            }
+            return 'indeterminate';
+        },
+
+        /**
+         * 父节点更新节点
+         * 因为父节点的选中状态是根子节点的选中状态是挂钩的
+         * 如果所有子节点都是选中状态->父节点选中
+         * 如果所有子节点都取消选中->父节点取消选中
+         * 其他情况->父节点半选中
+         * 统计个数
+         */
+        notifyNodeParentUpdate(parentNode) {
+            let type = this.judgeParentNodeStatus(parentNode.childNodes);
+            // console.log('type', type);
+            this.notifyNodeUpdate(parentNode, type);
+        },
+
+        /**
+         * 通知节点的子节点更改选中状态
+         * 向下走
+         * 子节点可能有多个
+         * 父节点选中:所有的子节点选中
+         * 父节点取消选中:所有的子节点取消选中
+         */
+        notifyChildNodesDepUpdate(childNodes, type) {
+            // console.log('子节点', childNodes, type);
+            if(!childNodes || !childNodes.length) return;
+            childNodes.forEach(node => {
+                this.notifyNodeUpdate(node, type);
+                if(node.childNodes) this.notifyChildNodesDepUpdate(node.childNodes, type);
+            });
+        },
+
+        /**
+         * 通知节点的父节点更改选中状态
+         * 向上走
+         * 父节点是唯一的
+         */
+        notifyParentDepUpdate(parent) {
+            // console.log('父节点', parent);
+            if(!parent) return;
+            this.notifyNodeParentUpdate(parent);
+            parent = parent.parent;
+            this.notifyParentDepUpdate(parent);
+        },
+
+        /**
+         * 节点的选择框选择状态发生变化
+         * 该节点选中状态变化后通知父子节点的选中状态
+         * status:选中状态
+         * node:该节点
+         */
+        handleNodeUpdateChange(status) {
+            // console.log('节点的选择框选择状态发生变化', status, this.node);
+            // 通知子节点更改选中状态
+            if(!this.node.childNodes && !this.node.parent) return;
+            let type = status ? 'checked' : 'cancel';
+            this.notifyNodeUpdate(this.node, type);
+            if(this.node.childNodes) {
+                this.notifyChildNodesDepUpdate(this.node.childNodes, type);
+            }
+            if(this.node.parent) {
+                this.notifyParentDepUpdate(this.node.parent);
+            }
+        },
+
 
     },
 

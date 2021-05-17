@@ -66,7 +66,7 @@ export default {
                 }else {
                     // 保留父组件checkbox-group的数据
                     this._checkboxGroup = parent;
-                    console.log('_checkboxGroup', this._checkboxGroup);
+                    // console.log('_checkboxGroup', this._checkboxGroup);
                     return true;
                 }
             }
@@ -134,10 +134,10 @@ export default {
          * 父组件可能有change事件，即选中状态变化后的回调
          * 因为这是由原生多选框选中状态变化后的回调，需要等视图更新后方可获取到新值，并将新值传给回调函数
          */
-        handleChange() {
+        handleChange(ev) {
             // console.log('原生checkbox发生了变化', this.model);
             this.$nextTick(()=>{
-                this.$emit('change', this.model, this._checkboxGroup);
+                this.$emit('change', this.model, ev);
                 if(this.isGroup) {
                     // 组件checkbox-group绑定的change事件
                     this.dispatch('YCheckboxGroup', 'change', [this._checkboxGroup.value]);

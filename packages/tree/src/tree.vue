@@ -115,6 +115,9 @@ export default {
             default: 18,
         },
 
+        // 是否严格选中(不涉及父子节点的选中状态)
+        checkStrictly: Boolean,
+
     },
 
     data() {
@@ -157,7 +160,7 @@ export default {
     mounted() {
         // console.log('tree', this.root, this.showCheckbox);
 
-        console.log('tree', this, this.$slots);
+        // console.log('tree', this, this.$slots);
     }
 }
 </script>

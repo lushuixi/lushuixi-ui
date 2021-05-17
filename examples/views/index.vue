@@ -8,7 +8,7 @@
             node-key="id" /> -->
 
         <!-- 树节点案例二:支持自定义节点显示内容 -->
-        <y-tree
+        <!-- <y-tree
             :data="dataCustom"
             node-key="id"
         >
@@ -36,8 +36,39 @@
                     </y-checkbox-group>
                 </div>
             </div>
-        </y-tree>
+        </y-tree> -->
         
+        <!-- 树节点案例三:选中状态变化后通知父子组件更改选中状态 -->
+        <y-tree
+            :data="dataCustom"
+            node-key="id"
+            :show-checkbox="true"
+        >
+            <div 
+                class="tree-row"
+                slot-scope="{node,data}"
+            >
+                <div class="tree-row-name">
+                    {{data.label}} -- 
+                    {{node.label}}
+                </div>
+                <div class="tree-row-operate">
+                    <y-checkbox-group 
+                        v-model="data.operates" 
+                        @click.native.stop
+                        @change="handleCheckboxGroupChange(data.operates)"
+                    >
+                        <y-checkbox
+                            v-for="(item, index) in data.menuOperates"
+                            :label="item.id"
+                            :key="index+item.id"
+                        >
+                            {{item.name}}
+                        </y-checkbox>
+                    </y-checkbox-group>
+                </div>
+            </div>
+        </y-tree>
     </div>
 </template>
 
@@ -57,7 +88,8 @@ export default {
                                 label: '四级 1-1-1-1',
                             }]
                         }]
-                    }]
+                    }],
+                    
                 },{
                     label: '一级 2',
                     children: [{
@@ -65,6 +97,8 @@ export default {
                         children: [{
                             label: '三级 2-1-1',
                         }]
+                    },{
+                        label: '二级 2-2'
                     }]
                 },{
                     label: '三级 2',
@@ -129,6 +163,9 @@ export default {
                                 }],
                             }]
                         }]
+                    },{
+                        label: '二级 1-1',
+                        operates: [],
                     }]
                 },{
                     label: '一级 2',

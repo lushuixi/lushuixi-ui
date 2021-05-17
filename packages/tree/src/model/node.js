@@ -205,4 +205,16 @@ export default class Node {
         // console.log('展开子树', this);
         this.expanded = true;
     }
+
+    /**
+     * 设置节点的选中状态
+     * (key/data, checked, deep) 
+     * @param {*} value 
+     * @param {*} deep 
+     * @param {*} recursion 递归
+     * @param {*} passValue 
+     */
+    setChecked(value, deep, recursion, passValue) {
+        console.log('设置节点的选中状态', value, deep, recursion, passValue)
+    }
 }
