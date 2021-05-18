@@ -10,6 +10,106 @@ import {
 } from './utils';
 
 /**
+ * 根据子节点的选中状态判断父节点的选中状态
+ * all - 表示子节点被选中checked
+ * none - 表示子节点没有被选中cancel
+ * half:!all && !none - 表示子节点的半选, all为false,则为true | all为true
+ * 这种实现方式有点接收不了,于是就来模拟一下
+ * 
+ * 子节点 - [
+ *  选中(checked:true,indeterminate:false),
+ *  不选中(checked:false,indeterminate:false),
+ *  半选中(checked:false,indeterminate:true),
+ * ]
+ * 默认all=true,none=true
+ * 第一个子节点,选中,则none=false -> all:true,none:false,half:false 即如果只有这一个子节点则父节点选中
+ * 第二个子节点,不选中,则all=false -> all:false,none:false,half:true 即如果只有这两个子节点的则父节点半选中
+ * 第三个子节点,半选中,则all=false,none=false -> all:false,none:false,half:true 即如果只有这三个子节点则父节点半选中
+ * 结果 -> 父节点半选中
+ * ---------------------------------------------------
+ * 评价:从父节点的选中状态出发,父节点的选中状态只有三种(选中|取消选中|半选中),实现相对简洁
+ * 记录父节点根据前面子节点的选中状态的选中状态
+ * 一个一个拆
+ * 
+ * 
+ * 自己的写法是统计该节点的子节点的选中状态:
+ * ---------------------------------------------------
+ * status.checked 记录选中的个数
+ * status.cancel 记录取消选中的个数
+ * status.indeterminate 记录半选中的个数
+ * 如果status.checked等于子节点的个数,则父节点选中
+ * 如果status.cancel等于子节点的个数,则父节点取消选中
+ * 否则,父节点半选中
+ * 自评:我是从所有子节点的选中状态出发,这种实现方式相对繁琐
+ * 
+ *
+ * 
+ * @param {Array} node 
+ */
+export const getChildState  = node => {
+    console.log('getChildState', node);
+    // 设置初值
+    let all = true;
+    let none = true;
+
+    for(let i = 0, j = node.length; i < j; i++) {
+        const n = node[i];
+        // checked: false | indeterminate:true
+        // 子节点没有选中
+        if(n.checked !== true || n.indeterminate) {
+            all = false;
+        }
+        // checked:true | indeterminate:true
+        // 字节点选中
+        if(n.checked !== false || n.indeterminate) {
+            none = false;
+        }
+    }
+    // console.log('getChildState', all, none, !all && !none);
+    return {
+        all,
+        none,
+        half: !all && !none,
+    }
+    
+}
+
+/**
+ * 向上走,设置父节点的选中状态
+ * @param {Node} node 
+ */
+const reInitChecked = function(node) {
+    // console.log('reInitChecked', node);
+    // 如果该节点没有子节点, 也就不用设置父节点选中状态了
+    if(node.childNodes.length === 0) return;
+
+    // 获取父节点的选中状态
+    const {all, none, half} = getChildState(node.childNodes);
+    // console.log('res', all, none, half);
+
+    // 设置节点的选中状态
+    // 应为是三个不同的值,所以没有办法拆成两行去设置
+    if (all) {
+        node.checked = true;
+        node.indeterminate = false;
+    } else if (half) {
+        node.checked = false;
+        node.indeterminate = true;
+    } else if (none) {
+        node.checked = false;
+        node.indeterminate = false;
+    }
+
+    const parent = node.parent;
+    if(!parent || parent.level === 0) return;
+
+    // 递归调用,往上走
+    if(!node.store.checkStrictly) {
+        reInitChecked(parent);
+    }
+}
+
+/**
  * getPropertyFromData(this, 'children')
  * node.store为tree-store中的this
  * node.store.children: 函数 | 字符串 | undefined
@@ -215,6 +315,48 @@ export default class Node {
      * @param {*} passValue 
      */
     setChecked(value, deep, recursion, passValue) {
-        console.log('设置节点的选中状态', value, deep, recursion, passValue)
+        // console.log('设置节点的选中状态', value, deep, recursion, passValue, this);
+        
+        // 1.设置节点自身的选中状态
+        this.indeterminate = value === 'half';
+        this.checked = value === true;
+
+        // 如果是严格模式即父子节点的选中状态是互不关联的
+        if(this.store.checkStrictly) return;
+
+        // 2.设置子孙节点的选中状态
+        const handleDescendants = () => {
+            // console.log('deep', deep);
+            if(deep) {
+                const childNodes = this.childNodes;
+                for(let i = 0, j = childNodes.length; i < j; i++) {
+                    const child = childNodes[i];
+                    // 意思就是取passValue
+                    // 如果passValue为true,则为true
+                    // 如果passValue为false,则看value与false取异
+                    // value为true,则为true;value为false,则为false
+                    // passValue = passValue || value
+                    passValue = passValue || value !== false;
+                    const isCheck = passValue;
+                    // console.log('child', child);
+                    child.setChecked(isCheck, deep, true, passValue);
+                }
+            }
+        }
+
+        // 设置子孙节点的选中状态
+        handleDescendants();
+
+        // console.log('recursion', recursion);
+
+        // 3.设置父节点的选中状态
+        const parent = this.parent;
+        // 如果父节点不存在或为根节点,则说明已经找到根了
+        if(!parent || parent.level === 0) return; 
+
+        if(!recursion) {
+            reInitChecked(parent);
+        }
+
     }
 }

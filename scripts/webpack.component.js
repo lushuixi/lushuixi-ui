@@ -1,5 +1,6 @@
 const path = require('path');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const loader = require('sass-loader');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const Components =  require('../components.json');
 
@@ -48,6 +49,15 @@ module.exports = {
                     }
                 }
             },
+            {
+                // 处理字体图片文件
+                test: /\.(svg|otf|ttf|woff2?|eot|gif|png|jpe?g)(\?\S*)?$/,
+                loader: 'url-loader',
+                query: {
+                    limit: 10000,
+                    name: path.posix.join('static', '[name].[hash:7].[ext]')
+                }
+            }
         ]
     },
     plugins: [

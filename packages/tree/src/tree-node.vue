@@ -243,13 +243,16 @@ export default {
 
         /**
          * 更改节点的选中状态
+         * 当节点的选中状态发生变化后的回调
          */
         handleCheckChange(value, ev) {
-            console.log('handleCheckChange', value, ev);
+            // console.log('handleCheckChange', value, ev);
             // 设置节点自身的选中状态
             // setChecked (key/data, checked, deep) 
-            // 通过 key / data 设置某个节点的勾选状态，使用此方法必须设置 node-key 属性
+            // 通过 key / data 设置某个节点的勾选状态, 使用此方法必须设置 node-key 属性
+            // 如果是严格模式下, 即父子节点的选中状态互不关联, 默认为false
             this.node.setChecked(ev.target.checked, !this.treeC.checkStrictly);
+
         }
 
     },
@@ -270,6 +273,7 @@ export default {
 
         const parent = this.$parent;
         this.treeC = parent.isTree ? parent : parent.treeC;
+        console.log(this, parent, this.treeC);
         // console.log('tree-node', this.node, this.node.childNodes);
     
         const treeC = this.treeC;

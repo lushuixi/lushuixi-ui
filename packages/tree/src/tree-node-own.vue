@@ -246,22 +246,25 @@ export default {
          * 取消选中 | 选中 | 半选中
          */
         notifyNodeUpdate(node, type) {
-            // console.log('通知节点更改选中状态:取消选中|选中|半选中', node);
-            switch(type) {
-                case 'checked': 
-                    // console.log('checkedcheckedchecked');
-                    node.checked = true;
-                    node.indeterminate = false;
-                    break;
-                case 'indeterminate':
-                    node.checked = false;
-                    node.indeterminate = true;
-                    break;
-                default: 
-                    node.checked = false;
-                    node.indeterminate = false;
-                    break;
-            }
+            // console.log('通知节点更改选中状态:取消选中|选中|半选中', node, type);
+            // switch(type) {
+            //     case 'checked': 
+            //         // console.log('checkedcheckedchecked');
+            //         node.checked = true;
+            //         node.indeterminate = false;
+            //         break;
+            //     case 'indeterminate':
+            //         node.checked = false;
+            //         node.indeterminate = true;
+            //         break;
+            //     default: 
+            //         node.checked = false;
+            //         node.indeterminate = false;
+            //         break;
+            // }
+            // 将switch更改以下两行代码
+            node.checked = type === 'checked';
+            node.indeterminate = type === 'indeterminate';
         },
 
         /**
@@ -298,6 +301,32 @@ export default {
                 return 'cancel';
             }
             return 'indeterminate';
+        },
+
+        /**
+         * 根据子节点判断父节点的选中状态
+         * 学习element-ui的写法
+         */
+        getparentStatusByChild(childNodes) {
+            if(!childNodes || childNodes.length === 0) return;
+            let checked = true;
+            let cancel = true;
+
+            for(let i = 0, j = childNodes.length; i < j; i++) {
+                const node = childNodes[n];
+                if(node.checked !== true || node.indeterminate) {
+                    checked = false;
+                }
+                if(node.checked !== false || node.indeterminate) {
+                    cancel = false;
+                }
+            }
+            return {
+                checked,
+                cancel,
+                indeterminate: !checked && !cancel,
+            }
+
         },
 
         /**

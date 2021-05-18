@@ -118,6 +118,12 @@ export default {
         // 是否严格选中(不涉及父子节点的选中状态)
         checkStrictly: Boolean,
 
+        // 是否更改子孙节点的选中状态
+        checkDescendants: {
+            type: Boolean,
+            default: false,
+        }
+
     },
 
     data() {
@@ -150,6 +156,8 @@ export default {
             data: this.data,
             props: this.props,
             // showCheckbox: this.showCheckbox,
+            checkStrictly: this.checkStrictly,
+            checkDescendants: this.checkDescendants,
             defaultExpandAll: this.defaultExpandAll,
         });
 

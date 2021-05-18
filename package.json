@@ -83,7 +83,7 @@
     "transliteration": "^1.1.11",
     "uglifyjs-webpack-plugin": "^2.1.1",
     "uppercamelcase": "^1.1.0",
-    "url-loader": "^1.0.1",
+    "url-loader": "^4.1.1",
     "vue": "^2.5.21",
     "vue-loader": "^15.7.0",
     "vue-router": "^3.0.1",
