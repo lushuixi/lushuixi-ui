@@ -210,6 +210,15 @@ export default class Node {
     }
 
     /**
+     * 设置节点的isLeaf状态
+     * 是否是叶子节点
+     */
+     updateLeafState() {
+        const childNodes = this.childNodes;
+        this.isLeaf = !childNodes || childNodes.length === 0;
+    }
+
+    /**
      * A instanceof B:A是否是B的实例
      * 设置该节点的data和childNodes
      * 根节点下的data是一个数组,其子节点便是根据此生成的
@@ -242,6 +251,8 @@ export default class Node {
         }
 
         // console.log('ndoe', this);
+
+        this.updateLeafState();
     }
 
     /**
@@ -324,7 +335,6 @@ export default class Node {
         // 如果是严格模式即父子节点的选中状态是互不关联的
         if(this.store.checkStrictly) return;
 
-        // 2.设置子孙节点的选中状态
         const handleDescendants = () => {
             // console.log('deep', deep);
             if(deep) {
@@ -344,12 +354,12 @@ export default class Node {
             }
         }
 
-        // 设置子孙节点的选中状态
+        // 2.设置子孙节点的选中状态
         handleDescendants();
 
         // console.log('recursion', recursion);
 
-        // 3.设置父节点的选中状态
+        // 3.设置父节点的选中状态(recursion:false)
         const parent = this.parent;
         // 如果父节点不存在或为根节点,则说明已经找到根了
         if(!parent || parent.level === 0) return; 

@@ -185,6 +185,10 @@ export default {
              * - expanded为false则显示子树(display:block)
              */
             childNodeRendered: false,
+
+            // 节点原来的选中状态
+            oldChecked: null,
+            oldIndeterminate: null,
         }
     },
 
@@ -211,6 +215,22 @@ export default {
             }
             // console.log('监听node.expanded', this);
         },
+
+        /**
+         * 监听节点选中状态之checked变化
+         */
+        'node.checked'(val) {
+            // console.log('监听节点选中状态', val);
+            this.handleSelectChange(val, this.node.indeterminate);
+        },
+
+        /**
+         * 监听节点半选中状态之indeterminate
+         */
+        'node.indeterminate'(val) {
+            // console.log('监听节点半选中状态', val);
+            this.handleSelectChange(this.node.checked, val);
+        }
     },
 
     methods: {
@@ -253,6 +273,40 @@ export default {
             // 如果是严格模式下, 即父子节点的选中状态互不关联, 默认为false
             this.node.setChecked(ev.target.checked, !this.treeC.checkStrictly);
 
+        },
+
+        /**
+         * 当节点的复选框选中状态变化后的回调
+         * 该节点的选中状态
+         * check-change:节点的复选框选中状态变化后的回调
+         *  - data:该节点的数据
+         *  - checked:该节点是否选中
+         *  - indeterminate:节点的子树是否被选中(说明:该节点本身是否是半选中状态)
+         */
+        handleSelectChange(checked, indeterminate) {
+            // console.log('当复选框节点选中后', checked, indeterminate);
+            // console.log('原来的选中状态', this.oldChecked, this.oldIndeterminate);
+            // 判断新值与旧值是否相同
+            // 与写法
+            if(this.oldChecked !== checked && this.oldIndeterminate !== indeterminate) {
+                // 如果选中状态发生变化,则调用祖先组件树的check-change方法
+                this.treeC.$emit('check-change', 
+                    this.node.data, // 节点本身的数据
+                    checked, // 节点的选中状态
+                    indeterminate, // 节点的半选中状态
+                )
+            }
+            // 给旧状态赋新值
+            this.oldChecked = checked;
+            // 为什么要再次设置半选中状态呢?
+            // 为什么不更新旧的半选中状态呢?
+            this.indeterminate = indeterminate;
+
+            // 或写法
+            // if(this.oldChecked !== checked && this.oldIndeterminate !== indeterminate) {
+            //     this.treeC.$emit('check-change', this.node.data, checked, indeterminate);
+            // }
+            // this.oldChecked = checked; this.oldIndeterminate = indeterminate;
         }
 
     },
@@ -273,7 +327,7 @@ export default {
 
         const parent = this.$parent;
         this.treeC = parent.isTree ? parent : parent.treeC;
-        console.log(this, parent, this.treeC);
+        // console.log(this, parent, this.treeC);
         // console.log('tree-node', this.node, this.node.childNodes);
     
         const treeC = this.treeC;
@@ -281,6 +335,10 @@ export default {
             console.warn('Can not find node\'s tree.');
         }
         // console.log('created', tree, tree.indent, this.node.level, tree.indent * (this.node.level-1))
+        
+        const props = treeC.props || {};
+        const childrenKey = props['children'] || 'children';
+        // console.log('props', props, childrenKey);
 
         /**
          * created:this.$data是空对象,则在created中赋值的变量在虚拟节点的根部

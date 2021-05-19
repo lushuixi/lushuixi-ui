@@ -40,29 +40,26 @@
         
         <!-- 树节点案例三:选中状态变化后通知父子组件更改选中状态 -->
         <y-tree
-            :data="dataCustom3"
+            ref="yTreeRef"
+            :data="dataCustom"
             node-key="id"
             :show-checkbox="true"
-        >
-            <div 
-                class="tree-row"
-                slot-scope="{node,data}"
-            >
+            :defaultExpandAll="true"
+            @check-change="handleNodeChange">
+            <div class="tree-row" slot-scope="{node,data}">
                 <div class="tree-row-name">
                     {{data.label}} -- 
                     {{node.label}}
                 </div>
-                <div class="tree-row-operate">
+                <div v-if="node.childNodes && node.childNodes.length === 0" class="tree-row-operate">
                     <y-checkbox-group 
                         v-model="data.operates" 
                         @click.native.stop
-                        @change="handleCheckboxChange(data, node)"
-                    >
+                        @change="handleCheckboxChange(data, node)">
                         <y-checkbox
                             v-for="(item, index) in data.menuOperates"
                             :label="item.id"
-                            :key="index+item.id"
-                        >
+                            :key="index+item.id">
                             {{item.name}}
                         </y-checkbox>
                     </y-checkbox-group>
@@ -70,7 +67,7 @@
             </div>
         </y-tree>
 
-        <el-tree
+        <!-- <el-tree
             ref="treeRef"
             :data="dataCustom"
             node-key="id"
@@ -91,7 +88,7 @@
                     </el-checkbox-group>
                 </div>
             </div>
-        </el-tree>
+        </el-tree> -->
     </div>
 </template>
 
@@ -388,6 +385,8 @@ export default {
          * checked:该节点是否选中
          * indeterminate:节点的子树中[是否有]被选中的节点(这句话的意思也就是说:该节点是否是半选中状态[因为半选中状态表示子节点中有被选中的节点])
          * 这样就可以实现节点的选中状态变化后通知该节点内部的复选框组的值更新(取消选择|全部选择)
+         * 
+         * 注意:如果半选中状态下仍未改变则不会触发
          */
         handleNodeChange(data, checked, indeterminate) {
             // console.log('handleNodeChange', data, checked, indeterminate);
@@ -400,6 +399,14 @@ export default {
                     data.operates = data.menuOperates.map(item => item.id);
                 }
             // })
+
+            // 获取选中节点
+            // const checkedNodes = this.$refs.yTreeRef.getCheckedNodes(true, true);
+            // console.log(88, checkedNodes);
+
+            // 获取选中节点的key
+            const checkedKeys = this.$refs.yTreeRef.getCheckedKeys(true);
+            console.log('88', checkedKeys);
         },
 
         /**
@@ -425,6 +432,8 @@ export default {
 
             // this.operates = this.$refs.treeRef.getCheckedNodes(true, true);
         },
+
+        
     },
     mounted() {
         // console.log('视图', this.data);

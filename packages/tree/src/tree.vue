@@ -140,9 +140,37 @@ export default {
     },
 
     methods: {
+        /**
+         * 外部在调用tree组件时,需要通过refs来访问该组件的方法
+         * 例如:this.$refs.treeRef.getCheckedNodes()
+         * 但是呢?
+         */
+
         // 获取节点的key
         getNodeKey(node) {
             return getNodeKey(this.nodeKey, node.data);
+        },
+
+        /**
+         * 获取选中节点
+         * leafOnly:是否只是叶子节点,默认值为false
+         * includeHalfChecked:是否包含半选节点,默认值为false
+         */
+        getCheckedNodes(leafOnly, includeHalfChecked) {
+            return this.store.getCheckedNodes(
+                leafOnly,
+                includeHalfChecked,
+            );
+        },
+
+        /**
+         * 获取选中状态下节点的key所组成的数据
+         * leafOnly:是否只是叶子节点,默认值为false
+         */
+        getCheckedKeys(leafOnly) {
+            return this.store.getCheckedKeys(
+                leafOnly,
+            );
         }
     },
 
@@ -167,7 +195,7 @@ export default {
 
     mounted() {
         // console.log('tree', this.root, this.showCheckbox);
-
+        this.getCheckedNodes();
         // console.log('tree', this, this.$slots);
     }
 }
