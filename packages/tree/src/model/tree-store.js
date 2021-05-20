@@ -37,25 +37,60 @@ export default class TreeStore {
         });
 
         // console.log('treeStore', this, options);
+
+        // 设置默认节点的选中
+        this._initDefaultCheckedNodes();
     }
 
     /**
      * 注册node节点
+     * 生成nodesMap数组(将树节点拍平存储以查找树节点)
      * @param {*} node 
      * @returns 
      */
     registerNode(node) {
         const key = this.key;
 
-        console.log('88noderegisterNode', node, this, key);
+        // console.log('88noderegisterNode', node, this, key);
 
         // 如果不存在则返回
         if(!key || !node || !node.data) return;
         
-        // const nodeKey = node.key;
-        // if(nodeKey !== undefined) this.nodesMap[node.key] = node;
+        const nodeKey = node.key;
+        if(nodeKey !== undefined) this.nodesMap[node.key] = node;
         
         // console.log('注册node节点', nodeKey !== undefined, this.nodesMap);
+    }
+
+    /**
+     * 设置节点的默认选中状态
+     */
+    _initDefaultCheckedNodes() {
+        // 笔者思路
+        // 设置默认节点选中
+        // this.defaultCheckedNodes要选中的节点的key所组成的数组
+        // 遍历this.defaultCheckedKeys, 根据this.nodesMap获取节点,设置节点的选中
+        // console.log('defaultCheckedKeys', this.defaultCheckedKeys, this.nodesMap);
+        // this.defaultCheckedKeys.forEach((key) => {
+        //     const node = this.nodesMap[key];
+        //     if(node) {
+        //         node.setChecked(true, true);
+        //     }
+        // })
+
+        // 源码写法
+        // 源码写法与自己不同的是:把用到的参数this.defaultCheckedKeys和this.nodesMap分别给赋值给了对应的变量
+        const defaultCheckedKeys = this.defaultCheckedKeys;
+        if(!defaultCheckedKeys || !defaultCheckedKeys.length) return;
+        const nodesMap = this.nodesMap;
+
+        defaultCheckedKeys.forEach((checkedKeys) => {
+            const node = nodesMap[checkedKeys];
+
+            if(node) {
+                node.setChecked(true, !this.checkStrictly);
+            }
+        });
     }
 
     /**
@@ -152,11 +187,13 @@ export default class TreeStore {
      * 则this.nodesMap[key]为undefined
      * 
      * 入参:
-     * Object|String|Number: data | key
+     * Node|Object|String|Number: data | key
      * 如果是Object类型怎么怎么做
+     * 如果data是树节点Node类型,则直接将其返回
+     * 如果是对象或字符串或数组,则从nodesMap中获取对应key的节点
      * 
      * 返回值:
-     * Node:节点
+     * Node节点
      * 如果data的key值不存在或树的node-key没有定义,则返回null
      */
     getNode(data) {
@@ -197,5 +234,132 @@ export default class TreeStore {
         // console.log('key', key, this.nodesMap, this.nodesMap[key]);
         // 这里知道了nodesMap的用处(根据key获取节点)
         return this.nodesMap[key] || null;
+    }
+
+    /**
+     * 获取半选中节点的数组
+     * 
+     * 入参:
+     * 没有
+     * 
+     * 返回值:
+     * 半选中节点所组成的数组(是节点的data而非节点所组成的数组) || []
+     */
+    getHalfCheckedNodes() {
+        console.log('选中半选节点的数组');
+        // 笔者写法
+        // 遍历树节点,筛选条件为节点处于半选中状态,返回符合条件的节点所组成的数组
+        // 看了源码后,发现自己的很多不足
+        // 首先,变量命名不够清晰明了,因为返回值是半选中节点所组成的数组,将res改为nodes会更加直白
+        // 其次,因为最外层调用getHalfCheckedNodes方法并没有传入参数,也就是无传参,但是自己调用自己时,传入了参数,会造成歧义
+        // 好好学习,天天向上 ----------------------------------------
+
+        // const res = [];
+        // nodes = nodes || this.root.childNodes;
+        // nodes.forEach(node => {
+        //     if(node.indeterminate === true && node.checked === false) {
+        //         res.push(node);
+        //     }
+        //     this.getHalfCheckedNodes(node.childNodes);
+        // })
+        // return res;
+
+        // 源码
+        // 变量命名直白清晰明了
+        // 把具体的判断逻辑写在tranverse里面了 -------------------
+        const nodes = [];
+        
+        const tranverse = function(node) {
+            const childNodes = node.root ? node.root.childNodes : node.childNodes;
+            childNodes.forEach((child) => {
+                if(child.indeterminate) {
+                    nodes.push(child.data);
+                }
+                tranverse(child);
+            })
+        };
+
+        tranverse(this);
+    
+        return nodes;
+    }
+
+    /**
+     * 获取半选中节点的key所组成的数组
+     * 
+     * 入参:
+     * 没有
+     * 
+     * 返回值:
+     * 半选中节点的key所组成的数组(是节点的key) || []
+     */
+    getHalfCheckedKeys() {
+        console.log('getHalfCheckedKeys', '获取节点的key所组成的数组');
+        // 笔者写法
+        // 获取节点的key
+        // 先获取节点,筛选条件半选中,将符合条件的节点的key
+        // 写到一半的时候,突然想到,可以借用它法
+        // 因为getHalfCheckedNodes方法是获取半选中节点所组成的数组的,那么可以根据该方法的返回值筛选得到key所组成的数组
+        // 恭喜自己又进了一步
+        // const keys = [];
+        // const traverse = function(node) {
+        //     const childNodes = node.root ? node.root.childNodes : node.childNdoes;
+        //     childNodes.forEach((child) => {
+        //         if(child.indeterminate) {
+        //             keys.push(child[this.key]);
+        //         }
+        //         tranverse(child);
+        //     })
+        // }
+        // traverse(this);
+        // return keys;
+
+        // 笔者写法二
+        return this.getHalfCheckedNodes().map((data) => (data || {})[this.key]);
+    }
+
+    /**
+     * 
+     */
+    _setCheckedKeys(key, leafOnly = false, checkedKeys) {
+        console.log('设置选中的节点');
+    }
+
+    /**
+     * 通过key设置目前勾选的节点
+     * 前提条件:设置node-key
+     * 
+     * 入参:
+     * data:要选中节点的key
+     * leafOnly:是否仅设置叶子节点(如果leafOnly为true,则仅设置该节点的叶子节点为选中状态,且自己的状态为半选中状态或选中状态)
+     * 
+     */
+    setCheckedKeys(keys = [], leafOnly = true) {
+        // 笔者思路 
+        // setCheckedKeys(keys = [], leafOnly = true)
+        // 根据节点的key设置勾选
+        // 筛选条件:根据key获取节点,节点的isLeaf与leafOnly比较
+        // 将符合条件的节点设置选中状态(checked:true,indeterminate:false)
+        // console.log('设置节点的key', data, leafOnly, this.nodesMap);
+        // data.forEach((key) => {
+        //     const node = this.nodesMap[key];
+        //     console.log('key', key, this.nodesMap[key], node.isLeaf);
+        //     // 如果leafOnly为false,则选中node节点
+        //     // 否则,再对node进行筛选,看node.isLeaf是否为true,如果为true,则设置选中,否则不设置
+        //     if(!leafOnly || (leafOnly && node.isLeaf)) {
+        //         node.setChecked(true, true);
+        //     }
+        // })
+        
+        // 源码写法
+        this.defaultCheckedKeys = keys;
+        const key = this.key;
+        const checkedKeys = {};
+        keys.forEach((key) => {
+            checkedKeys[key] = true;
+        });
+
+        // console.log('checkedKeys', checkedKeys);
+        this._setCheckedKeys(key, leafOnly, checkedKeys);
     }
 } 

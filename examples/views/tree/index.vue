@@ -42,6 +42,7 @@
         <y-tree
             ref="yTreeRef"
             :data="dataCustom3"
+            node-key="id"
             :show-checkbox="true"
             :defaultExpandAll="true"
             @check-change="handleNodeChange">
@@ -408,7 +409,7 @@ export default {
             // console.log('88', checkedKeys);
 
             // 获取节点(根据key或者data)
-            const node = this.$refs.yTreeRef.getNode(26);
+            // const node = this.$refs.yTreeRef.getNode(26);
             // const node = this.$refs.yTreeRef.getNode({
             //     label: '三级 2',
             //     operates: [],
@@ -424,7 +425,19 @@ export default {
             //         name:'编辑',
             //     }]
             // });
-            console.log('888', node);
+            // console.log('888', node);
+
+            // 获取半选中节点
+            // const halfChecked = this.$refs.yTreeRef.getHalfCheckedNodes();
+            // console.log('88', halfChecked);
+
+            // 获取半选中节点的key
+            // const halfCheckedKeys = this.$refs.yTreeRef.getHalfCheckedKeys();
+            // console.log('88', halfCheckedKeys);
+
+            // 通过keys设置目前勾选的节点
+            const setCheckedKeys = this.$refs.yTreeRef.setCheckedKeys([11]);
+            console.log(88, setCheckedKeys);
         },
 
         /**
@@ -432,7 +445,7 @@ export default {
          * 只有叶子节点才有复选框组, 所以只需要通知改节点以及父组件更改选中状态
          */
         handleCheckboxChange(data, node) {
-            // console.log('handleCheckboxGroupChange', data, node);
+            console.log('handleCheckboxGroupChange', data, node);
             if(!data || !data.operates || !data.menuOperates) return;
 
             let status;
@@ -462,7 +475,7 @@ export default {
             //     console.log(prop, item[prop])
             // }
             // item.$treeNodeId = 33;
-        // })
+        // });
     }
 }
 </script>

@@ -122,7 +122,10 @@ export default {
         checkDescendants: {
             type: Boolean,
             default: false,
-        }
+        },
+
+        // 默认选中节点的key组成的数组
+        defaultCheckedKeys: Array,
 
     },
 
@@ -178,7 +181,35 @@ export default {
          */
         getNode(data) {
             return this.store.getNode(data);
-        }
+        },
+
+        /**
+         * 获取半选中节点
+         * 没有入参
+         * 返回半选中节点
+         */
+        getHalfCheckedNodes() {
+            return this.store.getHalfCheckedNodes();
+        },
+
+        /**
+         * 获取半选中节点的key
+         * 没有入参
+         * 返回半选中节点的key所组成的数组
+         */
+        getHalfCheckedKeys() {
+            return this.store.getHalfCheckedKeys();
+        },
+
+        /**
+         * 根据节点的keys设置勾选的节点
+         * 入参:
+         * 节点key组成的数组,默认值为[]
+         * 是否只设置叶子节点的选中状态,默认值为false
+         */
+        setCheckedKeys(keys, leafOnly) {
+            return this.store.setCheckedKeys(keys, leafOnly);
+        },
     },
 
     created() {
@@ -194,6 +225,7 @@ export default {
             checkStrictly: this.checkStrictly,
             checkDescendants: this.checkDescendants,
             defaultExpandAll: this.defaultExpandAll,
+            defaultCheckedKeys: this.defaultCheckedKeys,
         });
 
         // 树的根节点
@@ -202,8 +234,9 @@ export default {
 
     mounted() {
         // console.log('tree', this.root, this.showCheckbox);
-        this.getCheckedNodes();
+        // this.getCheckedNodes();
         // console.log('tree', this, this.$slots);
+        // console.log('defaultCheckedKeys', this.defaultCheckedKeys)
     }
 }
 </script>
