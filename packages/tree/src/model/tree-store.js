@@ -10,8 +10,8 @@
  * 参考:https://blog.csdn.net/weixin_44691513/article/details/108416033
  * 
  */
-
 import Node from './node';
+import {getNodeKey} from './utils';
 
 export default class TreeStore {
     constructor(options) {
@@ -23,7 +23,7 @@ export default class TreeStore {
             }
         }
 
-        // this.nodesMap = {};
+        this.nodesMap = {};
         
         /**
          * 实例化根节点Node
@@ -39,22 +39,24 @@ export default class TreeStore {
         // console.log('treeStore', this, options);
     }
 
-    // /**
-    //  * 注册node节点
-    //  * @param {*} node 
-    //  * @returns 
-    //  */
-    // registerNode(node) {
-    //     const key = this.key;
+    /**
+     * 注册node节点
+     * @param {*} node 
+     * @returns 
+     */
+    registerNode(node) {
+        const key = this.key;
 
-    //     // 如果不存在则返回
-    //     if(!key || !node || !node.data) return;
+        console.log('88noderegisterNode', node, this, key);
+
+        // 如果不存在则返回
+        if(!key || !node || !node.data) return;
         
-    //     const nodeKey = node.key;
-    //     if(nodeKey !== undefined) this.nodesMap[node.key] = node;
+        // const nodeKey = node.key;
+        // if(nodeKey !== undefined) this.nodesMap[node.key] = node;
         
-    //     // console.log('注册node节点', nodeKey !== undefined, this.nodesMap);
-    // }
+        // console.log('注册node节点', nodeKey !== undefined, this.nodesMap);
+    }
 
     /**
      * 获取选中状态[全选中|半选中]的节点
@@ -139,5 +141,61 @@ export default class TreeStore {
         // console.log(88, {}[this.lushuixi]);
         // 所以如果this.key不存在或者data不存在则返回值未undefined
         return this.getCheckedNodes(leafOnly).map((data) => (data || {})[this.key]);
+    }
+
+    /**
+     * 根据key值或者data获取节点
+     * 前提条件:设置了节点的key(node-key)
+     * 如果没有设置key怎么办?每个节点设置了$treeNodeId
+     * 如果node-key值没有设置,则key取自$treeNodeId
+     * 但是如果node-key没有设置,则this.nodesMap是空对象
+     * 则this.nodesMap[key]为undefined
+     * 
+     * 入参:
+     * Object|String|Number: data | key
+     * 如果是Object类型怎么怎么做
+     * 
+     * 返回值:
+     * Node:节点
+     * 如果data的key值不存在或树的node-key没有定义,则返回null
+     */
+    getNode(data) {
+        // 笔者写法-繁琐-命令式编程
+        // 自己还在想如何根据对象还是字符串或数字类型的data获取node
+        // 自己的想法:先遍历节点,再根据判断条件(如果是对象,怎么怎么办?如果式字符串或数字类型,怎么怎么办)
+        // 判断条件结束后,再根据节点的childNodes去调用自身
+        // 看了源码的写法,想想都好难受,自己的好复杂啊------------------
+
+        // if(dataOrKey === undefined || dataOrKey === null) return;
+        // 分对象类型和非对象类型
+        // console.log('获取节点', dataOrKey, typeof dataOrKey, this);
+        // const nodes = this.root && this.root.childNodes;
+        // for(let i = 0, j = nodes.length; i < j; i++) {
+        //     const node = nodes[i];
+        //     const data = node.data;
+        //     // 判断条件
+        //     if(typeof dataOrKey !== 'object') {
+        //         if(data[this.key] === dataOrKey) {
+        //             console.log('找到了', node);
+        //             return node;
+        //         } else {
+        //             this.getNode(node.childNodes);
+        //         }
+        //     } else {
+        //         console.log('dataOrKey', dataOrKey, data);
+        //     }
+        // }
+
+        // 源码-清晰明了-声明式编程
+        // 无论data是对象类型或字符串|数字类型,都要根据key来获取节点
+        // 首先要做的是根据data获取节点的key
+        // 接着根据key获取节点 ---------------------------- 
+        // 如何根据key获取节点?遍历节点吗?这时候,this.nodesMap便上场了
+        // 源码中使用的是对象,将节点根据key生成一个节点地图
+        if(data instanceof Node) return data;
+        const key = typeof data !== 'object' ? data : getNodeKey(this.key, data);
+        // console.log('key', key, this.nodesMap, this.nodesMap[key]);
+        // 这里知道了nodesMap的用处(根据key获取节点)
+        return this.nodesMap[key] || null;
     }
 } 

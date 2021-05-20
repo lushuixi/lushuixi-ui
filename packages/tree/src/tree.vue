@@ -171,6 +171,13 @@ export default {
             return this.store.getCheckedKeys(
                 leafOnly,
             );
+        },
+
+        /**
+         * 根据key或者data获取节点
+         */
+        getNode(data) {
+            return this.store.getNode(data);
         }
     },
 

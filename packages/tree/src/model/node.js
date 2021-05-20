@@ -197,7 +197,8 @@ export default class Node {
         }
 
         // 节点注册,为什么会在tree-store中呢?为什么要注册?
-        // store.registerNode(this);
+        // 因为需要节点的地图以找节点的时候方便些
+        store.registerNode(this);
 
         // console.log('Node', this, options);
     }
@@ -210,10 +211,19 @@ export default class Node {
     }
 
     /**
+     * 获取key
+     */
+    get key() {
+        const nodeKey = this.store.key;
+        if(this.data) return this.data[nodeKey];
+        return null;
+    }
+
+    /**
      * 设置节点的isLeaf状态
      * 是否是叶子节点
      */
-     updateLeafState() {
+    updateLeafState() {
         const childNodes = this.childNodes;
         this.isLeaf = !childNodes || childNodes.length === 0;
     }

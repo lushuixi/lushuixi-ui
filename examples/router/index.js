@@ -16,6 +16,10 @@ export default  new  VueRouter({
         {
             path: '/table',
             component: () => import('../views/table'),
+        },
+        {
+            path: '/tree',
+            component: () => import('../views/tree'),
         }
     ]
 })
