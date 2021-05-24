@@ -246,7 +246,7 @@ export default class TreeStore {
      * 半选中节点所组成的数组(是节点的data而非节点所组成的数组) || []
      */
     getHalfCheckedNodes() {
-        console.log('选中半选节点的数组');
+        // console.log('选中半选节点的数组');
         // 笔者写法
         // 遍历树节点,筛选条件为节点处于半选中状态,返回符合条件的节点所组成的数组
         // 看了源码后,发现自己的很多不足
@@ -294,7 +294,7 @@ export default class TreeStore {
      * 半选中节点的key所组成的数组(是节点的key) || []
      */
     getHalfCheckedKeys() {
-        console.log('getHalfCheckedKeys', '获取节点的key所组成的数组');
+        // console.log('getHalfCheckedKeys', '获取节点的key所组成的数组');
         // 笔者写法
         // 获取节点的key
         // 先获取节点,筛选条件半选中,将符合条件的节点的key
@@ -319,10 +319,146 @@ export default class TreeStore {
     }
 
     /**
+     * 获取所有的节点
+     */
+    _getAllNodes() {
+        // 自己写法
+        // 看了源码自己的评价-----------
+        // 变量定义不明确
+        // nodes -> allNodes
+        // key -> nodeKey
+        // console.log('_getAllNodes', this.nodesMap);
+        // let nodes = [];
+        // let nodesMap = this.nodesMap;
+        // for(let key in nodesMap) {
+        //     if(nodesMap.hasOwnProperty(key)) {
+        //         nodes.push(nodesMap[key]);
+        //     }
+        // }
+        // console.log('哈喽', nodes);
+        // Object.keys(nodesMap).forEach((key) => {
+        //     if(nodesMap.hasOwnProperty(key))
+        //         nodes.push(nodesMap[key]);
+        // });
+        // console.log('哈喽', nodes);
+
+        // 源码写法
+        const allNodes = [];
+        const nodesMap = this.nodesMap;
+        for(let nodeKey in nodesMap) {
+            if(nodesMap.hasOwnProperty(nodeKey)) {
+                allNodes.push(nodesMap[nodeKey]);
+            }
+        }
+        return allNodes;
+    }
+
+    /**
+     * 设置key在checkedKeys中的节点选中
+     * 其余节点不选中
      * 
+     * Object.create:创建一个新对象
+     * 
+     * @param {*} key 
+     * @param {*} leafOnly 
+     * @param {*} checkedKeys 
      */
     _setCheckedKeys(key, leafOnly = false, checkedKeys) {
-        console.log('设置选中的节点');
+        // console.log('设置选中的节点', key, leafOnly, checkedKeys);
+        // const allNodes = this._getAllNodes();
+        // 非常重要:节点根据node.level从小到大排列,
+        // 这样可以保证父节点在前,子节点在后
+        const allNodes = this._getAllNodes().sort((a,b)=>(b.level - a.level));
+        const cache = Object.create(null);
+        const keys = Object.keys(checkedKeys);
+        // console.log('hello lusuix', cache, keys);
+
+        // 首先设置所有节点取消选中状态
+        allNodes.forEach(node => node.setChecked(false, false));
+
+        for(let i = 0, j = allNodes.length; i < j; i++) {
+            const node = allNodes[i];
+            const nodeKey = node.data[key].toString();
+            // 判断指定的key是否在数组keys中
+            let checked = keys.indexOf(nodeKey) > -1;
+            
+            // console.log(node.data.id, node);
+            
+            // 如果不在,设置非选中
+            if(!checked) {
+                console.log('不在', node.data.id, checked, node, cache, cache[nodeKey])
+                if(node.checked && !cache[nodeKey]) {
+                    node.setChecked(false, false);
+                }
+                continue;
+            }
+
+            // console.log('在', node.data.id, checked, node, cache, cache[nodeKey])
+
+            // 如果在,则设置选中
+            let parent = node.parent;
+            while(parent && parent.level > 0) {
+                // console.log('parent8888', parent)
+                cache[parent.data[key]] = true;
+                parent = parent.parent;
+            }
+            // console.log('在', cache);
+
+            // 如果是叶子节点
+            if(node.isLeaf || this.checkStrictly) {
+                node.setChecked(true, false);
+                continue;
+            }
+            // 如果是非叶子节点
+            node.setChecked(true, true);
+
+            // 如果leafOnly为true,也就是只是设置该节点下的子树中的叶子节点为选中状态
+            if(leafOnly) {
+                // console.log('le', leafOnly)
+                // 先设置非选中
+                node.setChecked(false, false);
+                // 递归设置非叶子节点为取消选中
+                const tranverse = function(node) {
+                    const childNodes = node.childNodes;
+                    childNodes.forEach((child) => {
+                        if(!child.isLeaf) {
+                            child.setChecked(false, false);
+                        }
+                        tranverse(child);
+                    })
+                };
+                tranverse(node);
+            }
+        }
+    }
+    
+    /**
+     * 设置节点为选中状态
+     * 使用此方法必须设置 node-key 属性
+     * 
+     * 入参:
+     * nodes:勾选节点数据的数组
+     * leafOnly:是否是叶子节点
+     */
+    setCheckedNodes(nodes, leafOnly = false) {
+        // 自己的思路
+        // console.log('设置节点为选中状态', nodes);
+        // const keys = [];
+        // nodes.forEach((node) => {
+        //     const nodeKey = getNodeKey(this.key, node);
+        //     keys.push(nodeKey);
+        // });
+        // this.setCheckedKeys(keys, leafOnly);
+
+        // 源码写法
+        const key = this.key;
+        const checkedKeys = {};
+        nodes.forEach((item) => {
+            checkedKeys[(item || {})[key]] = true;
+        });
+
+        this._setCheckedKeys(key, leafOnly, checkedKeys);
+        
     }
 
     /**
@@ -334,7 +470,7 @@ export default class TreeStore {
      * leafOnly:是否仅设置叶子节点(如果leafOnly为true,则仅设置该节点的叶子节点为选中状态,且自己的状态为半选中状态或选中状态)
      * 
      */
-    setCheckedKeys(keys = [], leafOnly = true) {
+    setCheckedKeys(keys = [], leafOnly = false) {
         // 笔者思路 
         // setCheckedKeys(keys = [], leafOnly = true)
         // 根据节点的key设置勾选
@@ -352,6 +488,7 @@ export default class TreeStore {
         // })
         
         // 源码写法
+        // 设置默认选中节点的key
         this.defaultCheckedKeys = keys;
         const key = this.key;
         const checkedKeys = {};
@@ -359,7 +496,7 @@ export default class TreeStore {
             checkedKeys[key] = true;
         });
 
-        // console.log('checkedKeys', checkedKeys);
+        // console.log('checkedKeys', checkedKeys, leafOnly);
         this._setCheckedKeys(key, leafOnly, checkedKeys);
     }
 } 

@@ -47,7 +47,7 @@ import {
  * @param {Array} node 
  */
 export const getChildState  = node => {
-    console.log('getChildState', node);
+    // console.log('getChildState', node);
     // 设置初值
     let all = true;
     let none = true;
@@ -336,7 +336,7 @@ export default class Node {
      * @param {*} passValue 
      */
     setChecked(value, deep, recursion, passValue) {
-        // console.log('设置节点的选中状态', value, deep, recursion, passValue, this);
+        // console.log('设置节点的选中状态', value, deep, recursion, passValue, this.data.id);
         
         // 1.设置节点自身的选中状态
         this.indeterminate = value === 'half';
@@ -373,11 +373,12 @@ export default class Node {
         const parent = this.parent;
         // 如果父节点不存在或为根节点,则说明已经找到根了
         if(!parent || parent.level === 0) return; 
-
+        
+        // 如果recursion不存在或为false,则设置父节点的选中状态(根据子节点的选中状态)
         if(!recursion) {
             reInitChecked(parent);
         }
 
     }
-    
+
 }

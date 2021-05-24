@@ -202,12 +202,26 @@ export default {
         },
 
         /**
+         * 设置节点为选中状态
+         * 入参:
+         * nodes:要设置为选中状态的节点的数据所组成的数组
+         * leafOnly:是否仅设置叶子节点
+         */
+        setCheckedNodes(nodes, leafOnly) {
+            return this.store.setCheckedNodes(nodes, leafOnly);
+        },
+
+        /**
          * 根据节点的keys设置勾选的节点
          * 入参:
          * 节点key组成的数组,默认值为[]
          * 是否只设置叶子节点的选中状态,默认值为false
+         * 
+         * const setCheckedKeys = this.$refs.yTreeRef.setCheckedKeys([22, 19], true);
+         * console.log('setCheckedKeys', setCheckedKeys)
          */
         setCheckedKeys(keys, leafOnly) {
+            // console.log('leee', keys, leafOnly)
             return this.store.setCheckedKeys(keys, leafOnly);
         },
     },
