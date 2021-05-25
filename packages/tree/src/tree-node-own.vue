@@ -227,9 +227,11 @@ export default {
          * 点击展开|收缩
          */
         handleClick() {
-            // console.log('点击了', this.expanded);
+            // console.log('点击了888', this.expanded);
             // this.handleExpandIconClick();
-
+            const store = this.treeC.store;
+            store.setCurrentNode(this.node);
+            // console.log('hello lushuixi');
             if(this.expanded) {
                 // 如果已经展开了,则收缩
                 this.node.collapse();

@@ -3,6 +3,7 @@
  * 树的属性和方法
  * 
  * ES6 class(类)
+ * https://es6.ruanyifeng.com/#docs/class
  * constructor:构造方法
  * this关键字则代表实例对象
  * 构造函数的prototype属性，在ES6的“类”上面继续存在。事实上，类的所有方法都定义在类的prototype属性上面
@@ -14,6 +15,11 @@ import Node from './node';
 import {getNodeKey} from './utils';
 
 export default class TreeStore {
+    /**
+     * 构造方法,类的默认执行方法
+     * 且默认放回this(实例对象)
+     * @param {*} options 
+     */
     constructor(options) {
 
         // 赋值初始化:options是对象,遍历使用for...in...
@@ -442,6 +448,7 @@ export default class TreeStore {
      */
     setCheckedNodes(nodes, leafOnly = false) {
         // 自己的思路
+        // 想着可以调用setCheckedKeys来实现
         // console.log('设置节点为选中状态', nodes);
         // const keys = [];
         // nodes.forEach((node) => {
@@ -498,5 +505,33 @@ export default class TreeStore {
 
         // console.log('checkedKeys', checkedKeys, leafOnly);
         this._setCheckedKeys(key, leafOnly, checkedKeys);
+    }
+
+    /**
+     * 获取当前被选中节点的key
+     * 使用此方法必须设置 node-key 属性，若没有节点被选中则返回 null
+     * 无需在这里实现
+     */
+    // getCurrentKey() {
+    //     // 自己的思路
+    //     // 要获取当前选中节点的key,那么首先要知道的是当前选中的节点
+    //     // 如何获取当前选中的节点呢?
+    //     console.log('获取当前被选中节点的key');
+    // }
+
+    /**
+     * 获取当前选中的节点
+     * 如何获取呢?
+     * 节点在tree-node.vue
+     */
+    getCurrentNode() {
+        
+    }
+
+    /**
+     * 设置当前节点
+     */
+    setCurrentNode(currentNode) {
+        console.log('currentNode', currentNode)
     }
 } 

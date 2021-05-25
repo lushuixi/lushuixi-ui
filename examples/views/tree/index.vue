@@ -436,6 +436,10 @@ export default {
             // console.log('88', halfCheckedKeys);
 
             // 通过keys设置目前勾选的节点
+
+            // 获取当前被选中节点的key
+            // const currentKey = this.$refs.yTreeRef.getCurrentKey();
+            // console.log('currentKey', currentKey);
         },
 
         /**
@@ -480,55 +484,55 @@ export default {
             // console.log(88, setCheckedKeys);
 
             // 设置树节点的选中(通过节点的data)
-            const setCheckedNodes = this.$refs.yTreeRef.setCheckedNodes(
-                [
-                        {
-                            label: '三级 2',
-                operates: [],
-                id: 26,
-                menuOperates: [{
-                    id:1,
-                    name:'查看',
-                },{
-                    id:2,
-                    name:'新增',
-                },{
-                    id:3,
-                    name:'编辑',
-                }]
-            },{
-                label: '二级 2-1',
-                        operates: [],
-                        id: 24,
-                        menuOperates: [{
-                            id:1,
-                            name:'查看'
-                        },{
-                            id:2,
-                            name:'新增'
-                        },{
-                            id:3,
-                            name:'编辑'
-                        }],
-                        children: [{
-                            label: '三级 2-1-1',
-                            operates: [],
-                            id: 30,
-                            menuOperates: [{
-                                id:1,
-                                name:'查看'
-                            },{
-                                id:2,
-                                name:'新增'
-                            },{
-                                id:3,
-                                name:'编辑'
-                            }],
-                        }]
-            }
-                ], false
-            );
-            console.log(88, setCheckedNodes);
+            // const setCheckedNodes = this.$refs.yTreeRef.setCheckedNodes(
+            //     [
+            //             {
+            //                 label: '三级 2',
+            //     operates: [],
+            //     id: 26,
+            //     menuOperates: [{
+            //         id:1,
+            //         name:'查看',
+            //     },{
+            //         id:2,
+            //         name:'新增',
+            //     },{
+            //         id:3,
+            //         name:'编辑',
+            //     }]
+            // },{
+            //     label: '二级 2-1',
+            //             operates: [],
+            //             id: 24,
+            //             menuOperates: [{
+            //                 id:1,
+            //                 name:'查看'
+            //             },{
+            //                 id:2,
+            //                 name:'新增'
+            //             },{
+            //                 id:3,
+            //                 name:'编辑'
+            //             }],
+            //             children: [{
+            //                 label: '三级 2-1-1',
+            //                 operates: [],
+            //                 id: 30,
+            //                 menuOperates: [{
+            //                     id:1,
+            //                     name:'查看'
+            //                 },{
+            //                     id:2,
+            //                     name:'新增'
+            //                 },{
+            //                     id:3,
+            //                     name:'编辑'
+            //                 }],
+            //             }]
+            // }
+            //     ], false
+            // );
+            // console.log(88, setCheckedNodes);
 
         })
     }

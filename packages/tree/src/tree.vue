@@ -224,6 +224,26 @@ export default {
             // console.log('leee', keys, leafOnly)
             return this.store.setCheckedKeys(keys, leafOnly);
         },
+
+        /**
+         * 获取当前选中的节点
+         */
+        getCurrentNode() {
+            const currentNode = this.store.getCurrentNode();
+            return currentNode ? currentNode.data : null;
+        },
+
+        /**
+         * 获取当前被选中节点的key
+         */
+        getCurrentKey() {
+            // 自己的思路:写到store里
+            // return this.store.getCurrentKey();
+            // 抛出错误
+            if(!this.nodeKey) throw new Error('[Tree] nodeKey is required in getCurrentKey');
+            const currentNode = this.getCurrentNode();
+            return currentNode ? currentNode[this.nodeKey] : null;
+        }
     },
 
     created() {
