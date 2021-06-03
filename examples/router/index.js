@@ -20,6 +20,10 @@ export default  new  VueRouter({
         {
             path: '/tree',
             component: () => import('../views/tree'),
+        },
+        {
+            path: '/message',
+            component: () => import('../views/message'),
         }
     ]
 })
