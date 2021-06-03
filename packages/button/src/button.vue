@@ -16,6 +16,7 @@
 </template>
 
 <script>
+// import debonce from '../../../src/utils/debonce';
 export default {
 
     name: 'YButton',
@@ -43,7 +44,9 @@ export default {
     methods: {
         handleClick(evt) {
             console.log('handleClick', evt);
-            this.$emit('click', evt)
+            // 给其增加防抖
+            this.$emit('click', evt);
+            // debonce(this.$emit('click', evt), 1000);
         }
     },
 

@@ -6,5 +6,6 @@
     "checkbox-group": "./packages/checkbox-group/index.js",
     "table": "./packages/table/index.js",
     "table-column": "./packages/table-column/index.js",
-    "tree": "./packages/tree/index.js"
+    "tree": "./packages/tree/index.js",
+    "message": "./packages/message/index.js"
 }

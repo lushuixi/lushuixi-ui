@@ -7,6 +7,7 @@ import CheckboxGroup from '../packages/checkbox-group/index.js';
 import Table from '../packages/table/index.js';
 import TableColumn from '../packages/table-column/index.js';
 import Tree from '../packages/tree/index.js';
+import Message from '../packages/message/index.js';
 
 const components = [
     Button,
@@ -25,6 +26,11 @@ const install = function (Vue, opts = {}) {
     components.forEach(component => {
         Vue.component(component.name, component);
     });
+
+    // 挂载到vue的原型链上
+    // 这样便可以在vue文件中通过this.$message来使用了
+    Vue.prototype.$message = Message;
+    // console.log('vue', Vue.prototype);
 }
 
 export default {
@@ -37,4 +43,5 @@ export default {
     Table,
     TableColumn,
     Tree,
+    Message,
 }

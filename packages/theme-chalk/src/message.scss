@@ -1,0 +1,68 @@
+.y-message {
+    min-width: 380px;
+    box-sizing: border-box;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%);
+    transition: opacity .3s, transform .4s, top .4s;
+    background-color: #edf2fc;
+    border: 1px solid #ebeef5;
+    border-radius: 4px;
+    padding: 15px 15px 15px 20px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+}
+.y-message__content {
+    padding: 0;
+    font-size: 14px;
+    line-height: 1;
+}
+.y-message p {
+    margin: 0;
+}
+/* info */
+.y-message--info .y-message__content {
+    color: #909399;
+}
+/* success */
+.y-message--success {
+    background-color: #f0f9eb;
+    border-color: #e1f3d8;
+}
+.y-message--success .y-message__content {
+    color: #67C23A;
+}
+/* warning */
+.y-message--warning {
+    background-color: #fdf6ec;
+    border-color: #faecd8;
+}
+.y-message--warning .y-message__content {
+    color: #E6A23C;
+}
+/* error */
+.y-message--error {
+    background-color: #fef0f0;
+    border-color: #fde2e2;
+}
+.y-message--error .y-message__content {
+    color: #F56C6C;
+}
+/* 
+    v-enter: 定义进入过渡的开始状态。
+        在元素被插入之前生效，在元素被插入之后的下一帧移除。
+    v-leave-active: 定义离开过渡生效时的状态。
+        在整个离开过渡的阶段中应用，
+        在离开过渡被触发时立刻生效，
+        在过渡/动画完成之后移除。
+        这个类可以被用来定义离开过渡的过程时间，
+        延迟和曲线函数。 
+*/
+.y-message-fade-enter,
+.y-message-fade-leave-active {
+    opacity: 0;
+    transform: translate(-50%, -100%);
+}
