@@ -8,6 +8,7 @@ import Table from '../packages/table/index.js';
 import TableColumn from '../packages/table-column/index.js';
 import Tree from '../packages/tree/index.js';
 import Message from '../packages/message/index.js';
+import Loading from '../packages/loading/index.js';
 
 const components = [
     Button,
@@ -27,10 +28,16 @@ const install = function (Vue, opts = {}) {
         Vue.component(component.name, component);
     });
 
+    // 注册loading指令
+    Vue.use(Loading.directive);
+
     // 挂载到vue的原型链上
     // 这样便可以在vue文件中通过this.$message来使用了
     Vue.prototype.$message = Message;
     // console.log('vue', Vue.prototype);
+
+    // 挂载-加载
+    Vue.prototype.$loading = Loading.service;
 }
 
 export default {
@@ -44,4 +51,5 @@ export default {
     TableColumn,
     Tree,
     Message,
+    Loading,
 }

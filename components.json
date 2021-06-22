@@ -7,5 +7,6 @@
     "table": "./packages/table/index.js",
     "table-column": "./packages/table-column/index.js",
     "tree": "./packages/tree/index.js",
-    "message": "./packages/message/index.js"
+    "message": "./packages/message/index.js",
+    "loading": "./packages/loading/index.js"
 }
