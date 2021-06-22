@@ -291,3 +291,15 @@ export function removeClass(el, cls) {
 }
 ```
 
+#### 1.5.3 javascript Element.getBoundingClientRect()
+方法返回元素的大小及其相对于视口的位置。
+兼容性不错
+返回值是一个 DOMRect 对象，这个对象是由该元素的 getClientRects() 方法返回的一组矩形的集合, 即：是与该元素相关的CSS 边框集合。
+top: 元素上边距离页面上边的距离
+left: 元素右边距离页面左边的距离
+right: 元素右边距离页面左边的距离
+bottom: 元素下边距离页面上边的距离
+width: 元素宽度
+height: 元素高度
+
+参考:https://www.jb51.net/article/165518.htm
